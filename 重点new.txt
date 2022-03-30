@@ -424,6 +424,15 @@ this.$t("sendNullMessage")
   font-size: 12px !important;
 }
 19、前端调样式的时候，若出现怎么调也没用的情况，可能是项目默认css文件中配置了
+20、单独html实现button，调用api功能，可以使用$.ajax
+21、前端项目文件：router-路由配置文件夹（ip/detail;ip/detail1）跳转
+                路由直接带参数：
+                      {
+                      path: '/detail/:id/:info/:isTrue/:classList',
+                      name: 'detail',
+                      component: Detail
+                      }
+                调用:this.$route.params
 ###################################################################################################
 					6、kill python进程shell命令
 ###################################################################################################
@@ -1266,8 +1275,10 @@ issue.update(components=[{"add":{"name":components_value}}])
 jira.add_attachment(issue=issue, attachment=attachmentFileName)
 ###############################################################################################
 【python收发邮件】
+smtplib/poplib
 1、确保该邮箱的smtp/pop邮件服务器及port是多少，支持收发邮件
     telnet smtp.office365.com 587/telnet outlook.office365.com 110
     可以输出正确的登录提示
 2、配置邮箱的smtp/pop授权码
+3、发送html邮件，html格式/button应邮件服务器而显示不同，建议用打开外部链接的方式实现button功能
 ###############################################################################################
