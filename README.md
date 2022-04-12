@@ -1,4 +1,3 @@
-# tips
 ##################################################################################################
 						1、docker部署
 ##################################################################################################
@@ -425,6 +424,15 @@ this.$t("sendNullMessage")
   font-size: 12px !important;
 }
 19、前端调样式的时候，若出现怎么调也没用的情况，可能是项目默认css文件中配置了
+20、单独html实现button，调用api功能，可以使用$.ajax
+21、前端项目文件：router-路由配置文件夹（ip/detail;ip/detail1）跳转
+                路由直接带参数：
+                      {
+                      path: '/detail/:id/:info/:isTrue/:classList',
+                      name: 'detail',
+                      component: Detail
+                      }
+                调用:this.$route.params
 ###################################################################################################
 					6、kill python进程shell命令
 ###################################################################################################
@@ -651,6 +659,33 @@ print(next(g))
 print("*"*20)
 # 当再次调用next函数时，会从上次停止的地方执行，因为上次没有赋值，所以res为None，执行循环，执行yield，输出4
 print(next(g))
+24、静态方法：@staticmethod或@classmethod
+（1）相同：可以不需要实例化，直接类名.方法名()来调用；
+（2）不同：
+      class A(object):  
+          bar = 1  
+          def foo(self):  
+              print 'foo'  
+
+          @staticmethod  
+          def static_foo():  
+              print 'static_foo'  
+              print A.bar  
+
+          @classmethod  
+          def class_foo(cls):  
+              print 'class_foo'  
+              print cls.bar  
+              cls().foo()  
+      ###执行  
+      A.static_foo()  
+      A.class_foo()  
+      >>>输出：
+          static_foo
+          1
+          class_foo
+          1
+          foo
 ################################################################################
 【ubuntu一些安装注意点】
 1、安装百度网盘(浏览器装插件baiduexporter，安装aria2)
@@ -728,6 +763,17 @@ pytorch：动态框架，对变量做任何操作都是灵活的
         pip install py2neo==4.3.0
         
 注：步骤二和三可选一，都是以一为基准
+知识点：
+1、关系数据库(mysql数据库)与图数据库(neo4j),图数据库按照节点显示，性能更快
+2、neo4j的一些命令：（neo4j/py2neo）https://www.cnblogs.com/weijiqian/p/14840798.html
+(1)创建带标签和属性的节点：CREATE (n:Person { name: 'Andres', title: 'Developer' })
+   创建节点间的关系：MERGE (song)-[:SUNG_BY]->(singer)
+(2)删除：MATCH (n:Person { name: 'UNKNOWN' }) DELETE n
+(3)修改：MATCH (n:Person { name: 'UNKNOWN' }) SET n.name = '张三'
+(3)查(节点'()',关系'[]')：
+      MATCH：MATCH (a:Song{name:"后来"})--(b:Singer) RETURN b.name查找name属性为“后来”的节点Song,与之关系的Singer节点值b，返回b的name
+      MERGE：MERGE (song:Song {id:"1", name:"后来"})
+      MERGE = CREATE + MATCH，如果它不存在于图中，则它创建新的节点/关系并返回结果
 ###########################################################################################
 【rasa的开源UI-聊天工具 （见project/chatbot-UI/chatroom、test_bot）】
 1、在已有的rasa bot项目中新建credentials.yml，在其中加上内容：
@@ -1267,8 +1313,10 @@ issue.update(components=[{"add":{"name":components_value}}])
 jira.add_attachment(issue=issue, attachment=attachmentFileName)
 ###############################################################################################
 【python收发邮件】
+smtplib/poplib
 1、确保该邮箱的smtp/pop邮件服务器及port是多少，支持收发邮件
     telnet smtp.office365.com 587/telnet outlook.office365.com 110
     可以输出正确的登录提示
 2、配置邮箱的smtp/pop授权码
+3、发送html邮件，html格式/button应邮件服务器而显示不同，建议用打开外部链接的方式实现button功能
 ###############################################################################################
