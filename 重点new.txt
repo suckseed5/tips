@@ -878,14 +878,18 @@ name：名称
 知识点：
 1、关系数据库(mysql数据库)与图数据库(neo4j),图数据库按照节点显示，性能更快
 2、neo4j的一些命令：（neo4j/py2neo）https://blog.csdn.net/leisure_life/article/details/121120511
+（node('吴京'，'成龙')组成label('明星')，每个node之间有关系(吴京-[认识]->成龙)）
 (1)创建带标签和属性的节点：CREATE (n:Person { name: 'Andres', title: 'Developer' })
    创建节点间的关系：MERGE (song)-[:SUNG_BY]->(singer)
 (2)删除：MATCH (n:Person { name: 'UNKNOWN' }) DELETE n
 (3)修改：MATCH (n:Person { name: 'UNKNOWN' }) SET n.name = '张三'
-(3)查(节点'()',关系'[]')：
+(4)查(节点'()',关系'[]')：
       MATCH：MATCH (a:Song{name:"后来"})--(b:Singer) RETURN b.name查找name属性为“后来”的节点Song,与之关系的Singer节点值b，返回b的name
       MERGE：MERGE (song:Song {id:"1", name:"后来"})
       MERGE = CREATE + MATCH，如果它不存在于图中，则它创建新的节点/关系并返回结果
+(5)获取所有标签：MATCH (n) RETURN distinct labels(n)
+(6)获取某个node(一个)：MATCH (p:Person) RETURN p LIMIT 1
+(7)查找node:r和o之间的关系是INCLUED——IN：MATCH (o:Song) -[INCLUDED_IN] -> (r:Album) RETURN r, o
 #################################################################################################
 【15、rasa知识点】
 #################################################################################################
@@ -1292,7 +1296,7 @@ sanic：异步编程工具箱，Sanic在处理长连接时特别有用
 #################################################################################################
 【24、网络-异步】
 #################################################################################################
-Async-await
+async-await-aysncio(协程)
 同步指python服务，阻塞指python返回值
 需要做一件事能不能立即得到返回应答，如果不能立即获得返回，需要等待，那就阻塞了，否则就可以理解为非阻塞
 阻塞/同步：打一个电话一直到有人接为止
@@ -1302,6 +1306,18 @@ Async-await
 同步非阻塞：你干吧，我每隔5分钟来看看
 异步阻塞：你干吧，好了告诉我，我等着
 异步非阻塞：你干吧，好了告诉我，我先去忙别的了
+例子：
+import asyncio
+async def nested():
+    return 42
+async def main():
+    #1、 创建task，更快
+    # task = asyncio.create_task(nested())
+    #2、 不同调用，慢些
+    task = nested()
+    # 必须加await,不加只是创建了一个协程对象
+    await task
+asyncio.run(main())
 #################################################################################################
 【25、java知识点】
 #################################################################################################
