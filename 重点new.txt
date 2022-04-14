@@ -890,6 +890,24 @@ name：名称
 (5)获取所有标签：MATCH (n) RETURN distinct labels(n)
 (6)获取某个node(一个)：MATCH (p:Person) RETURN p LIMIT 1
 (7)查找node:r和o之间的关系是INCLUED——IN：MATCH (o:Song) -[INCLUDED_IN] -> (r:Album) RETURN r, o
+(8)csv导入：
+    1. 创建 `Movie` 实体
+    ```cypher
+    LOAD CSV with headers from 'https://raw.githubusercontent.com/Linusp/kg-example/master/movie/Movie.csv' as line
+    CREATE (:Movie {
+           id:line["id:ID"],
+           title:line["title"],
+           category:split(line["category:String[]"], ";"),
+           })
+    ```
+    2. 加载关系
+    `actor` 的关系
+    ```cypher
+    LOAD CSV with headers from 'https://raw.githubusercontent.com/Linusp/kg-example/master/movie/actor.csv' as line
+    MATCH (a:Movie {id:line[":START_ID"]})
+    MATCH (b:Person {id:line[":END_ID"]})
+    CREATE (a)-[:actor]->(b)
+    ```
 #################################################################################################
 【15、rasa知识点】
 #################################################################################################
