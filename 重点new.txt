@@ -495,7 +495,7 @@ https://www.cnblogs.com/freely/p/8022923.html（python2.6安装存在问题，�
 3、break与continue问题（必须配合if语句使用）
       break:循环中，若判断满足条件，执行break后所有循环都停止(结束所有循环)
       continue:循环中，若判断满足条件，执行continue后，以下代码不执行，继续下次循环(提前结束本轮循环，并直接开始下一轮循环)
-4、类的例子
+4、类的例子:https://baijiahao.baidu.com/s?id=1705874913379869451&wfr=spider&for=pc
       （1）简单的例子
       class Student(object):
         def __init__(self,name,score):
@@ -571,6 +571,25 @@ https://www.cnblogs.com/freely/p/8022923.html（python2.6安装存在问题，�
         ...
       ValueError: score must between 0 ~ 100!
       即表示只允许对Student实例添加name和age属性
+      (4) 子类继承父类的实例属性：
+      class Animal(object):  #  python3中所有类都可以继承于object基类
+         def __init__(self, name, age):
+             self.name = name
+             self.age = age
+
+         def call(self):
+             print(self.name, '会叫')
+
+      # 现在我们需要定义一个Cat 猫类继承于Animal，猫类比动物类多一个sex属性。 
+      class Cat(Animal):
+         def __init__(self,name,age,sex):
+             super(Cat, self).__init__(name,age)  # 不要忘记从Animal类引入属性，否则无法继承父类的name、age
+             self.sex=sex
+
+      if __name__ == '__main__':  # 单模块被引用时下面代码不会受影响，用于调试
+         c = Cat('喵喵', 2, '男')  #  Cat继承了父类Animal的属性
+         c.call()  # 输出 喵喵 会叫 ，Cat继承了父类Animal的方法 
+
 5、生成器
       列表生成式：a = [i for i in [1,2,3] if i > 3]
       占用空间大，取数据：a[1]....
@@ -868,6 +887,7 @@ name：名称
                           dbms.security.auth_enabled=false
 
                   启动、控制台、停止服务:bin/neo4j start // console  // stop
+或者直接拉取docker镜像：https://blog.csdn.net/qq_38066812/article/details/122473655
 步骤二：neo4j和neo4j-driver安装-见实例：neo4j_test.py
        pip install neo4j==4.2.1 neo4j-driver==1.7.6
 
@@ -1141,6 +1161,20 @@ name：名称
         - active_loop: null
     （6）、若前端用户在表单内长时间未响应，自动清空表单
     （7）、当用户问了一个问题，rasa陷入无法响应Circuit breaker tripped，最好在每个对话/form结束后，return [Restarted()]
+    10、知识图谱机器人
+    （1）neo4j：见【14、neo4j搭建教程-构建知识图谱】，传入数据
+    （2）rasa：
+         intent：query_knowledge_base
+         entities:
+               object_type：(标签labels，某一大类，不同的label可以用不同的value，例如：电影、歌手、歌曲，酒店)[restaurants]{"entity": "object_type", "value": "restaurant"}
+               mention：(指代词，例如第一家酒店，最后一个...)[first]{"entity": "mention", "value": "1"}
+               attribute:(节点的属性，都归为attribute,例如：xx酒店的价格)[price range]{"entity": "attribute", "value": "price-range"}
+               标签node，其他详细的值，例如：霸王别姬，吴京，后来，如家，直接标注实体，[如家]{"entity": "hotel"}
+               默认slot:knowledge_base_last_object、knowledge_base_last_object_type、knowledge_base_listed_objects、knowledge_base_objects（只有是知识图谱机器人才有，可在domain中自定义type:custom）
+         actions:action_query_knowledge_base
+                方法1：基于rasa_sdk:ActionQueryKnowledgeBase，KnowledgeBase--》InMemoryKnowledgeBase)
+                方法2：if判断纯写neo4j，cypher查询语句
+
 #################################################################################################
 【16、NLP github 项目】
 #################################################################################################
