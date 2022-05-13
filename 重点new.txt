@@ -190,6 +190,13 @@
 7、id重新排序：
 alter table chatbot.jd_express drop column id;
 alter table chatbot.jd_express add id mediumint(8) not null primary key auto_increment first;
+8、统计数据：
+select question as ask, count(question) as count from chatbot.question_record group by question order by count(question) desc limit 10;
+注意：1、输出的数据将question重新命名为ask
+      2、count统计question的个数
+      3、group by question根据question分组（与count对应）
+      4、order by count(question)根据question的个数分类
+      5、desc降序（asc升序）
 ####################################################################################################
 【3、SVN操作】
 ####################################################################################################
@@ -433,6 +440,7 @@ this.$t("sendNullMessage")
                       component: Detail
                       }
                 调用:this.$route.params
+22、请求api方法：axios（异步）---多个方法没有先后顺序
 ###################################################################################################
 【6、linux的一些命令】
 ###################################################################################################
@@ -687,6 +695,8 @@ https://www.cnblogs.com/freely/p/8022923.html（python2.6安装存在问题，�
         all_bug=jira.search_issues("project = 'WSD Worksheet System'",maxResults=-1)#jql语法，查询项目为JD下面的所有缺陷，最多2000条
         3、获取单个jira的issue
         issue = jira.issue(jira_id)
+        3.1、获取单个jira中所有issue的字段组成
+        res = issue.raw
         4、新建jira
         create_jira = jira.create_issue(issue_dict)
         5、updatejira(增改删[{"add/set/remove":{"name":components_value}}])
