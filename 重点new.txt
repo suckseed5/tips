@@ -433,14 +433,31 @@ this.$t("sendNullMessage")
 19、前端调样式的时候，若出现怎么调也没用的情况，可能是项目默认css文件中配置了
 20、单独html实现button，调用api功能，可以使用$.ajax
 21、前端项目文件：router-路由配置文件夹（ip/detail;ip/detail1）跳转
-                路由直接带参数：
+  （1）路由直接带参数：
                       {
                       path: '/detail/:id/:info/:isTrue/:classList',
                       name: 'detail',
                       component: Detail
                       }
                 调用:this.$route.params
+  （2）vue-router中hash模式和history模式：
+      2.1：默认hash模式:可以通过window.location.href获取参数
+        优点：可以访问任意url，没有先后
+        缺点：url中带'#'，不美观
+      2.2：histoty模式：可以通过this.$route.params获取参数
+        优点：不带'#'
+        缺点：需要配置nginx，
+            location / {
+                 try_files $uri $uri/ /index.html;
+                 }
+            根路径前进后退都可以，但只有访问过根路径，才能访问其他路径，例如:"/"-->"/chatbot"
 22、请求api方法：axios（异步）---多个方法没有先后顺序
+23、css方法:
+    （1）弹性布局：页面样式不会随页面放大缩小变化
+         display:flex
+    （2）尽量不要修改固定框架的样式，例如：el-row..，可以在该方法里面加上class="style-row",添加样式
+    （3）id是唯一的，class可以用于不同的id(不同的人id可以穿一样的衣服class)
+24、
 ###################################################################################################
 【6、linux的一些命令】
 ###################################################################################################
@@ -1487,15 +1504,24 @@ asyncio.run(main())
 #################################################################################################
 【25、java知识点】
 #################################################################################################
+【一些学习资料】
+      1、idea:https://www.bilibili.com/video/BV1PW411X75p?spm_id_from=333.999.0.0
+      2、git:https://mp.weixin.qq.com/s/Bf7uVhGiu47uOELjmC5uXQ
+      3、maven:https://www.bilibili.com/video/BV1dp4y1Q7Hf?spm_id_from=333.999.0.0
+      4、jdk:https://www.bilibili.com/video/BV1tE411V7xA
+      5、git:https://www.bilibili.com/video/BV1Xx411m7kn?spm_id_from=333.999.0.0
+      6、linux:https://www.bilibili.com/video/BV1T64y1D7qD
 【Spring Boot】
       1、sping boot各层之间的关系？
       controller-->service-->serviceimpl-->dao-->daoimpl-->entity
-      controller业务控制层，负责前后端交互，接收数据和请求
-      service服务层，负责对接口的定义和逻辑处理
+      controller业务控制层，负责前后端交互，接收数据和请求（定义与前端对应的接口名）
+      service服务层，负责对接口的定义和逻辑处理（定义接口实现类）
+      serviceImpl接口实现类（定义接口具体方法实现类）
       dao数据库交互层，负责对数据进行增删改查
-      entity实体层，负责定义数据类型
+      entity实体层，负责定义数据类型（定义各个参数的值或者mybatis数据库表参数）
+      com.sony.chatbot.mapper层（定义数据库操作方法）
+      resourses.mapper层（xml具体实现类，定义数据库具体操作方法,sql语句）
       总结：个人理解DAO面向表，Service面向业务。后端开发时先数据库设计出所有表，然后对每一张表设计出DAO层，然后根据具体的业务逻辑进一步封装DAO层成一个Service层，对外提供成一个服务。
-      resource-->mapper（xml具体实现类）
       2、测试
       在test中编写测试类，鼠标指定对应类，右键运行该类
       3、数据库客户端新建tables-->java-->generate.java代码生成器自动构建需要的service
@@ -1518,6 +1544,21 @@ asyncio.run(main())
           //调用toArray方法将List<String>转化为String[]
           String[] strs = list.toArray(new String[]{});
           System.out.println("String[]:"+Arrays.toString(strs));
+      mybatis,xml语法：
+      1、mybatis处理集合、数组参数使用in查询等语句的两种方法
+          方法一：先对列表处理成('','')字符串，然后在xml中用${}
+          String ids = "('"+StringUtils.join(codeList,"','")+"')";
+          select * from user where id not in ${ids}
+          注意：要用${}(拼接符)才能处理ids中的所有元素，不能用#{}(占位符)
+          方法二：直接在xml中用foreach遍历codeList列表
+          select * from user where id in #{codeList}
+          <foreach collection="codeList" item="codeList" index="i" open="(" separator="," close=")">#{codeList}</foreach>
+      其他语法：
+      1、遍历方法：for，foreach
+      2、需要定义变量/方法类的类型：List<QuestionRecord> findRecord(QueryParam queryParam)
+      findRecord是List类型,其中组成参数在QuestionRecord中构成,findRecord变量/方法需要参数queryParam，此参数类型是QueryParam，需要实现在entity中配置QueryParam
+
+
 #################################################################################################
 【26、numpy与pandas】
 #################################################################################################
