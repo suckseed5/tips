@@ -456,8 +456,12 @@ this.$t("sendNullMessage")
     （1）弹性布局：页面样式不会随页面放大缩小变化
          display:flex
     （2）尽量不要修改固定框架的样式，例如：el-row..，可以在该方法里面加上class="style-row",添加样式
-    （3）id是唯一的，class可以用于不同的id(不同的人id可以穿一样的衣服class)
-24、
+    （3）id是唯一的（#{}），class（.{}）可以用于不同的id(不同的人id可以穿一样的衣服class)
+    （4）链接属性：
+          a:link {color:#000000;}      /* 未访问链接*/
+          a:visited {color:#00FF00;}  /* 已访问链接 */
+          a:hover {color:#FF00FF;}  /* 鼠标移动到链接上 */
+          a:active {color:#0000FF;}  /* 鼠标点击时 */
 ###################################################################################################
 【6、linux的一些命令】
 ###################################################################################################
@@ -827,6 +831,11 @@ https://www.cnblogs.com/freely/p/8022923.html（python2.6安装存在问题，�
          # 递归条件
          sub_max = list[0]
          return sub_max if sub_max>list[1:] else list[1:]
+23、打包依赖
+  （1）、确保该服务器上该项目能完全跑成功
+  （2）、将依赖名写到文件中：pip freeze > requirements.txt
+  （3）、导出包到require文件夹：pip download -d require -r requirements.txt
+  （4）、复制require目录和requirements.txt 到新机器，在所在目录执行命令安装：pip install --no-index --find-links=require -r requirements.txt
 ###############################################################################################
 【11、正则】
 #################################################################################################
@@ -834,8 +843,8 @@ https://www.cnblogs.com/freely/p/8022923.html（python2.6安装存在问题，�
 .*：贪婪匹配（从最后面往前匹配）若字符串中包含多个需要匹配的内容，匹配一个完整的内容
 .*?：懒惰匹配（从前面往后匹配）若字符串中包含多个需要匹配的内容，把多个内容都匹配出来
     例：101000000000100
-    .*：1010000000001
-    .*?：101
+    1.*1：1010000000001
+    1.*?1：101
 (2)找到不含title的句子：
     ^((?!title).)*$\n
 (3)句子开头^，句子结尾$
@@ -890,6 +899,7 @@ mount /dev/sdc4 /media/niko/F2F6-1BE4
         sudo apt-get autoremove
 wine使用：下载某个软件的exe文件，wine ...exe
 4、重装系统
+     linux：
     （1）linux制作ISO镜像U盘启动盘
          https://blog.csdn.net/master5512/article/details/69055662
     （2）插入U盘，按F12进入安装流程，选择usb模式
@@ -901,7 +911,7 @@ wine使用：下载某个软件的exe文件，wine ...exe
         https://www.yebaike.com/14/202104/3012781.html
         c、vscode
         settings.json文件(您可以在文件>首选项>设置>功能>终端>集成>自动化外壳:Linux中访问的文件)有一个参数 "terminal.integrated.inheritEnv": false 
-        d、Aconda
+        d、Anaconda
         https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/
         e、java1.8
         https://blog.csdn.net/weixx3/article/details/94109337
@@ -909,6 +919,31 @@ wine使用：下载某个软件的exe文件，wine ...exe
         https://blog.csdn.net/FungLi_notLove/article/details/104469940
         https://blog.csdn.net/sublime_k/article/details/106801068
         https://www.cnblogs.com/xiaostudy/p/11664076.html
+     windows：
+        a、chrome
+        https://www.google.cn/intl/zh-CN/chrome/
+        b、sublime
+        https://sublimetextcn.com/
+        c、vscode
+        https://www.runoob.com/w3cnote/vscode-tutorial.html
+        d、Anaconda--Anaconda3-2020.11
+        https://www.anaconda.com/products/distribution
+        https://blog.csdn.net/qq_35077107/article/details/124768271
+        e、java1.8
+        https://blog.csdn.net/qq_59854519/article/details/123187971
+        f、maven
+        https://blog.csdn.net/weixin_44080187/article/details/122933194
+        g、idea--2021.1以后版本
+        https://www.jetbrains.com/idea/download/#section=windows 
+        https://blog.csdn.net/latin_06/article/details/110038286?utm_medium=distribute.pc_aggpage_search_result.none-task-blog-2~aggregatepage~first_rank_ecpm_v1~rank_v31_ecpm-1-110038286-null-null.pc_agg_new_rank&utm_term=%E7%A8%8B%E5%BA%8F%E5%8C%85cn.hutool.core.util%E4%B8%8D%E5%AD%98%E5%9C%A8&spm=1000.2123.3001.4430
+        h、前端
+        https://blog.csdn.net/lianweiyu1998/article/details/117706477
+        https://blog.csdn.net/yyzx_yyzx/article/details/125716768
+        https://blog.csdn.net/qq_35913301/article/details/125394027
+        i、vim
+        https://blog.csdn.net/weixin_54363263/article/details/120790827
+
+
 ###########################################################################################
 【13、tersorflow和pytorch的区别】
 #################################################################################################
@@ -1589,5 +1624,11 @@ x[[0,1,2],  [0,1,0]]#获取数组(0,0)、(1,1)、(2，0)位置的数据，即1,4
 pandas:
 1、pandas是基于numpy数组构建的，但二者最大的不同是pandas是专门为处理表格和混杂数据设计的，比较契合统计分析中的表结构。pandas数组结构有一维Series和二维DataFrame。
 ##########################################################################################
-
+##################################################################################################
+【27、Android的一些知识】
+##################################################################################################
+1、安装：https://blog.csdn.net/qq_44845785/article/details/123024785
+https://jingyan.baidu.com/article/6fb756ecdca753651858fbbb.html
+https://blog.csdn.net/weixin_44985880/article/details/114645314
+https://blog.csdn.net/m0_49303104/article/details/122660782
 
