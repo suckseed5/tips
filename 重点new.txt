@@ -197,6 +197,9 @@ select question as ask, count(question) as count from chatbot.question_record gr
       3、group by question根据question分组（与count对应）
       4、order by count(question)根据question的个数分类
       5、desc降序（asc升序）
+9、跨表查询：https://blog.csdn.net/qq_45973003/article/details/122869770
+SELECT q.question,e.* FROM chatbot.question_example_standard q,chatbot.ecar e where e.intent=q.intent and q.intent_type="ecar";
+查询q表和e表，当e.intent等于q.intent且q.intent_type等于“ecar”时，输出q.question和e的所有值
 ####################################################################################################
 【3、SVN操作】
 ####################################################################################################
