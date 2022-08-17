@@ -1,12 +1,6 @@
 ##################################################################################################
 【1、docker部署】
 ##################################################################################################
-* 【版本说明】
-    - V1版本： 私有化版本，包括website+Django+tml环境+模型
-* 【统一帐号】
-    - account : tmlcloud 
-    - pwd : TML!@#qaz
-* 【V1】
     - Docker：
         (0) 创建容器： docker run -itd -p 9001:80 osint:latest /bin/bash   注意：一定要设置网络端口，否则无法通过网络访问
                       如果创建时忘记加，可如下解决https://www.cnblogs.com/chenpython123/p/10823879.html
@@ -26,39 +20,9 @@
         (7) 进入容器：sudo docker run -it [image_name] /bin/bash
         (7.1)docker容器自启动：docker container update --restart=always $(docker ps -a -q)
         关闭自启动：docker container update --restart=no $(docker ps -a -q)
-        (8) 进入容器启动服务
-       命令：  sh /etc/rc.d/rc.local（把一些要单独启动的进程放在该目录下启动）
-                     su - tmlcloud
-                     （如果配置深度学习，即bio语料训练，需要到认知云帐号下起服务，tmlcloud里面才有深度学习环境，
-                     1、bio语料训练也可以在该帐号下训练，命令：python /home/tmlcloud/run/tml-dl-1.0/tml_chunker/_chunker.pyc --mode train --train_data customs_extraction_bio.txt --test_data 01_15_bio_modified.txt.concepts --epoch 10 --eval_perl /home/tmlcloud/run/tml-dl-1.0/tml_chunker/conlleval_rev.pl
-                     2、更新了tml模型后，可以直接将/home/tmlcloud/run/models/...目录下的bin文件替换掉，并再次执行sh和su命令）
-                      ./bin/start.sh(注意用空格)（其他需要另外启动的服务）
-                    nohup python /home/tmlcloud/NLP_文档分析/python/tml_service.tml -p 9090 &
-      (9) 外部服务器测试
-                    准备测试数据data.json，放在目录下：/data/NLP_test/python_test
-                    命令：nginx
-                                nohup python /data/NLP_test/python_test/test_client.py &
-                    （查看nohup.out没有错误，即回传数据会保存在回传数据.json文件中）
-      (10)可能遇到的一些问题：
+      (8)可能遇到的一些问题：
            1、docker安装默认位置在系统盘，需要重新更改下位置，例：https://blog.csdn.net/runner668/article/details/80713713
-           2、执行测试脚本后，空间快速沾满，一般docker需要空间10G左右
-                 解决办法：查看tml是否授权成功（针对每台电脑有一个授权文件，docker也不能保存）
-                 - tml环境配置：
-                 准备_tml、_tml_server、_tml_client、tml_key.dat、_tml_getinfo（注意版本是centos版本，目录tml-kb/bin/centos-6.2-64版本）放到/usr/bin/目录下
-                 在上述文件上传到放到docker里面，目录：/usr/bin/
-                 将tml_key.dat、_tml_getinfo放到/etc目录下：
-                 使用命令如下：
-                 _tml_getinfo -key tml_key.dat -out tml_info.dat
-                通过_tml_getinfo生成tml_info.dat，将tml_info.dat发给孟老师，返回给你tml_license.dat，再将tml_info.dat放到/etc目录下
-                在/etc/路径下执行以下两个命令，赋权限：
-                chmod +x tml_key.dat
-                chmod +x tml_license.dat
-            3、如果有深度学习语料，需要执行su - tmlcloud命令，在认知云帐号下启动服务，具体操作流程见上面
-            4、/etc/rc.d/rc.local开机自启动可能用不了，只能手动sh /etc/rc.d/rc.local 
-            5、可能需要替换/home/tmlcloud/develop/tml_platform-1.0/tml_backend/impls/backend_impl.pyc
-            6、如果部署了认知云，需要把测试脚本settings.py,tml_cloud_settings.py,mapping.py与认知云参数相对应修改，特别注意tml_cloud_settings.py中ANALYZE_BY_APPKEY_URL需成本地地址，例：ANALYZE_BY_APPKEY_URL = "https://127.0.0.1/api/analyze_by_appkey/"
-            7、重新部署一台服务器的时候，会出现服务器本身访问不了docker的情况
-                原因1：需要修改test_client.py文件中的url改为该服务器的url
+           2、重新部署一台服务器的时候，会出现服务器本身访问不了docker的情况
                 原因2：服务器或者docker防火墙没有开
                 原因3：docker配置了nginx后，外部服务器nginx没有配置docker的ip
                 解决方法：vi /etc/nginx/nginx.conf
@@ -74,11 +38,7 @@
                                         }
                                         重启docker和nginx
     - Lib:
-        (1) 系统库： yum install openssl openssh-server openssh* openssl-devel sudo gcc-c++ wget zlib-devel pcre pcre-devel \
-                    boost-devel mysql* gperf libevent sqlite-devel postgresql-server.x86_64 sqlite* libevent libevent-devel libevent2 \
-                    libuuid libuuid-devel
-                    service sshd start
-        (2) Nginx: 
+        (1) Nginx: 
         
                 - 下载：wget http://nginx.org/download/nginx-1.17.5.tar.gz ;  
                 
@@ -90,7 +50,7 @@
                         }
                 - 启动: /usr/local/nginx/sbin/nginx
                 - 创建目录: mkdir -p /var/www/nginx-tml-platform && chown tmlcloud:tmlcloud -R /var/www
-        (3) Mysql
+        (2) Mysql
                 - 启动：   service mysqld start
                 - 配置：   1. mysqladmin -u root password pku123
                           2. mysql -u root -p
@@ -108,32 +68,6 @@
                              [mysqld_safe]
                              log-error=/var/log/mysqld.log
                              pid-file=/var/run/mysqld/mysqld.pid       
-        (6) gearmand
-                - 下载: wget https://github.com/gearman/gearmand/releases/download/1.1.12.1/gearmand-1.1.12.1.tar.gz
-                - 安装: gearmand-1.12
-                - 编译安装： ./configure ; make && make install
-                - 启动：gearmand -d
-        (7) Twisted10.0(注意使用该版本，新版本有bug不建议使用)
-                - 下载: wget https://twistedmatrix.com/Releases/Twisted/10.2/Twisted-10.2.0.tar.bz2
-                - 安装: python setup.py build & python setup.py install
-    - Web:
-        (1) Django的settings.py 注意数据库的地址与账号密码需要检查，与上面mysql配置的一致;
-            backend中的setting  上述两个setting默认使用settings.py.docker
-        (2) python库的安装 
-            a. pip freeze > requirements.txt 生成项目需要的依赖库文件
-            b. pip install -r requirements.txt  进行安装
-            c. pip install mysql MySQL-python simplejson
-        (3) 同步数据库
-            python manage.py makemigrations
-            python manage.py migrate
-        (4) gearman worker启动
-            cd tml_platform : ./scripts/start_gearman_workers.sh
-            cd tml_backend : ./scripts/start_gearman_workers.sh
-        (5) 后端分析服务启动
-            cd tml_backend: ./scripts/start_backend_service.sh 
-    - rc.local
-    - 测试：
-        reboot检查ngixn与django是否已启动，同时*.*.*.*/cloud 看前端是否可以正常登录
 ##################################################################################################
 【2、数据库相应命令（可以mysql界面化操作）】
 ##################################################################################################
@@ -200,6 +134,26 @@ select question as ask, count(question) as count from chatbot.question_record gr
 9、跨表查询：https://blog.csdn.net/qq_45973003/article/details/122869770
 SELECT q.question,e.* FROM chatbot.question_example_standard q,chatbot.ecar e where e.intent=q.intent and q.intent_type="ecar";
 查询q表和e表，当e.intent等于q.intent且q.intent_type等于“ecar”时，输出q.question和e的所有值
+10、正则:查询name中(不)符合正则'feedback_[0-9]'的数据
+select * from table where name REGEXP 'feedback_[0-9]'
+select * from table where name not REGEXP 'feedback_[0-9]'
+11、字符串拼接：
+CONCAT ('\n' ,title, '\n')
+##################################################################################################
+【2.1、数据库相应命令（可以mongodb界面化操作）】
+1、安装：（server与client版本一致）
+https://blog.csdn.net/crsitin_spade/article/details/121383699
+https://blog.csdn.net/li1325169021/article/details/124236076
+2、相关命令：https://blog.csdn.net/lejian/article/details/123364069
+3、注意点:
+插入一条：insert_one({})
+插入多条：insert_many([{},{}])
+替换插入：
+#若满足id的数据，更新这条数据为data_json，否则插入新的数据data_json
+mongo_collection.replace_one({'id':data_json['id']},data_json,upsert=True)
+查询：select id from table where name = 'weibo'
+find({'name':'weibo'},{'id':1})
+##################################################################################################
 ####################################################################################################
 【3、SVN操作】
 ####################################################################################################
@@ -217,7 +171,7 @@ svnstatus
 【h5】
   1、前期准备：
     1.1、将前端代码git到本地：git clone
-    1.2、配置nodejs+npm+vue环境：https://www.cnblogs.com/HansBug/p/8901865.html
+    1.2、ubuntu配置nodejs+npm+vue环境：https://www.cnblogs.com/HansBug/p/8901865.html
   2、切换到h5目录下面
   3、到配置目录切换测试环境：
   执行命令：
@@ -232,21 +186,6 @@ svnstatus
     npm run dev
   6、打开网址查看前端效果：http://localhost:8081
   7、提交代码
-
-【web】
-  1、进入测试环境：
-  执行命令：
-    cd scripts
-    sh publish_dev_package.sh
-  或者
-    ssh web@demo.tmlsystem.com -p 8123
-  2、进入测试服务器：需要配置登录权限，将公钥发给雪姐加下
-  执行命令：
-    cd develop/tml-osint-web
-    git pull origin master
-  3、打开测试网址：http://47.93.121.36/search/#/main/
-  登录帐号、密码进行测试，例：shianbang  123456
-  4、提交代码
 
 【后端接口对接】
 测试环境：ssh web@10.0.0.2
@@ -465,6 +404,11 @@ this.$t("sendNullMessage")
           a:visited {color:#00FF00;}  /* 已访问链接 */
           a:hover {color:#FF00FF;}  /* 鼠标移动到链接上 */
           a:active {color:#0000FF;}  /* 鼠标点击时 */
+    （5）当需要修改一些默认css样式时，为防止多个地方混用，嵌套css，例如：
+         .cai_suggest .el-form-item__label {
+                  XXXXX
+          }
+24、双目运算：c[a==b?1:0]=d，若a等于b，则c[1]=d，否则c[0]=d
 ###################################################################################################
 【6、linux的一些命令】
 ###################################################################################################
@@ -1595,6 +1539,7 @@ asyncio.run(main())
       1、遍历方法：for，foreach
       2、需要定义变量/方法类的类型：List<QuestionRecord> findRecord(QueryParam queryParam)
       findRecord是List类型,其中组成参数在QuestionRecord中构成,findRecord变量/方法需要参数queryParam，此参数类型是QueryParam，需要实现在entity中配置QueryParam
+      3、mapper.xml中,parameterType表示参数格式，resultMap="BaseResultMap"表示输出结果的格式为对应mapper的实体
 
 
 #################################################################################################
