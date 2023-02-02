@@ -1760,7 +1760,7 @@ https://blog.csdn.net/m0_49303104/article/details/122660782
 账户：[开发人员账户](https://developer.microsoft.com/zh-cn/microsoft-365/profile)，可注册免费试用。
       [微软团队管理中心](https://admin.teams.microsoft.com/dashboard)，Micosoft管理员中心可决定应用的发布，取消。
       [Azure账户](https://portal.azure.com/#home)，用visa行用卡可注册免费试用一年，Micoftsofte的云服务器。可以托管前端、后端服务，就不需要ngrok了，类似与Micosoft的服务器。新版系统创建Teams bot。
-      [Bot Framework](https://dev.botframework.com/bots)老版系统创建Teams bot。
+      [Bot Framework](https://dev.botframework.com/bots/new)老版系统创建Teams bot。
 
 开发工具：Micosoft支持利用[bot framework SDK](https://learn.microsoft.com/zh-cn/azure/bot-service/index-bf-sdk?view=azure-bot-service-4.0)开发App发布到Teams,Email,Slack...等[渠道](https://learn.microsoft.com/en-us/azure/bot-service/bot-service-channels-reference?view=azure-bot-service-4.0#action-support-by-channel)。
 
@@ -1787,6 +1787,14 @@ https://blog.csdn.net/m0_49303104/article/details/122660782
       改为
       https://d67a-38-83-110-6.ngrok.io/webhooks/rest/webhook
       3、参考博客：https://blog.csdn.net/xxjjxx
+      4、即使配置了ngrok，在Teamsbot中也无法通过"https://...ngrok../example.png"或者"https://...ngrok../index.html"打开图片或网页，
+      A内网访问Teams bot（公网），需要在A内网中配置ngrok服务，这样才能打开图片等静态资源。
+      5、a、新建bot：[Bot Framework](https://dev.botframework.com/bots/new) ---》向 Microsoft 注册您的机器人以生成新的 App ID 和密码
+        ==》获得MICROSOFT_APP_ID、MICROSOFT_APP_PASSWORD
+        b、创建teams项目：yo teams，在.env文件中填写a中ID、PASSWORD，进行开发
+        Teams[开发人员门户](https://dev.teams.microsoft.com/home)类似于UI化的env，与b中的.env一致
+        c、[发布应用](https://admin.teams.microsoft.com/policies/manage-apps),上传应用即上传b项目中的zip文件，其中是应用的一些参数，不包含代码
+        d、每次修改项目文件后，需要更新Bot Framework中的Messaging endpoint,重新发布应用时修改mainifest中的version
 ```
 ## 29、Nginx配置
 ### 29.1、Nginx配置https证书
