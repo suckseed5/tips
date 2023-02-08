@@ -1,4 +1,5 @@
 ## 1、docker部署
+![激活函数](pics/激活函数.jpg)
 ```
     - Docker：
         (0) 创建容器： docker run -itd -p 9001:80 osint:latest /bin/bash   注意：一定要设置网络端口，否则无法通过网络访问
