@@ -2389,7 +2389,7 @@ np.matmul(a, b) == a @ b
 
     感知机：f(x)=sign(wx+b)其中sign是个符号函数，若wx+b>=0取+1，若wx+b<0取-1，线性问题
 
-   ![MLP](pics/MLP.PNG)
+   ![MLP](pics/MLP.png)
 
     激活函数：让线性方程实现非线性化，解决更多问题
 
@@ -2399,7 +2399,7 @@ np.matmul(a, b) == a @ b
 
     SVM的目标是希望找到一个超平面能把数据分开，以sign符号函数作为分类决策函数，通过最大化支持向量距离超平面这个最小距离来对参数进行优化。
 
-   ![SVM](pics/SVM.jpg)
+   ![SVM](pics/SVM.png)
 
     感知器和SVM的对比：
 
