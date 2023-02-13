@@ -2365,7 +2365,7 @@ np.matmul(a, b) == a @ b
 ```
 2、sklearn：机器学习框架，不包含神经网络框架
 
-(1)linearRegression-线性回归：回归问题，利用一条线去拟合所有点
+2.1 linearRegression-线性回归：回归问题，利用一条线去拟合所有点
 
     f(x)=wx+b
 
@@ -2375,17 +2375,17 @@ np.matmul(a, b) == a @ b
 
    ![多项式线性回归](pics/多项式线性回归.PNG)
 
-(2)logisticRegression-逻辑回归：二分类问题，线性问题
+2.2 logisticRegression-逻辑回归：二分类问题，线性问题
 
     f(x)=sigmoid(wx+b)取值范围在0-1之间
 
     ![逻辑回归](pics/逻辑回归.PNG)
 
-(3)decisionTree-决策树：二分类；信息熵：h(x)=-(p(x1)logp(x1)+p(x2)logp(x2+...))
+2.3 decisionTree-决策树：二分类；信息熵：h(x)=-(p(x1)logp(x1)+p(x2)logp(x2+...))
 
     ![信息熵](pics/信息熵.PNG)
 
-(4)multilayerPerceptron-MLP-多层感知机：二分类问题，前馈神经网络，最早的神经网络，加入了隐藏层。
+2.4 multilayerPerceptron-MLP-多层感知机：二分类问题，前馈神经网络，最早的神经网络，加入了隐藏层。
 
     感知机：f(x)=sign(wx+b)其中sign是个符号函数，若wx+b>=0取+1，若wx+b<0取-1，线性问题
 
@@ -2395,7 +2395,7 @@ np.matmul(a, b) == a @ b
 
     ![激活函数](pics/激活函数.jpg)  
 
-(5)supportVectorMachine-svm-支持向量机-非线性问题
+2.5 supportVectorMachine-svm-支持向量机-非线性问题
 
     SVM的目标是希望找到一个超平面能把数据分开，以sign符号函数作为分类决策函数，通过最大化支持向量距离超平面这个最小距离来对参数进行优化。
 
@@ -2427,4 +2427,4 @@ np.matmul(a, b) == a @ b
 
 2.正则化，保留特征，但减少特征对应参数的大小，让每个特征都对预测产生一点影响。
 
-![正则化过拟合](pics/正则化过拟合.PNG)
+![正则化过拟合](pics/过拟合正则化.PNG)
