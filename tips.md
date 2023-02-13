@@ -2469,7 +2469,7 @@ np.matmul(a, b) == a @ b
 
     选择一个样本的k个最相似（特征空间最邻近）的样本中的大多数属于哪个类别，该样本就属于这个样本
 
-    ![KNN](pics/KNN.PNG)
+   ![KNN](pics/KNN.PNG)
     
 3、tensorflow：深度学习框架
 
