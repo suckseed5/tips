@@ -1,5 +1,4 @@
 ## 1、docker部署
-![激活函数](pics/激活函数.jpg)
 ```
     - Docker：
         (0) 创建容器： docker run -itd -p 9001:80 osint:latest /bin/bash   注意：一定要设置网络端口，否则无法通过网络访问
@@ -545,6 +544,84 @@ b、引入js、参数、css：<script></script>
    25.4、表单提交： input框 type=“submit“ 和“button“有什么区别
    1、<input type="button /> 需添加onclick=check(form)，点击执行check方法-->ajax方法。
    2、<input type="submit /> 无onclick，点击后会执行提交form表单的动作onsubmit="alert('Hello')"。
+26、vue结构：
+<template>
+</template>
+ 
+<script>
+import .. from "..";
+export default {
+  name: 'hello',
+  components: {..,..},
+  props: {}, //接收父组件传递过来的参数
+  created : {}, //html加载完成之前
+  computed: {}, //提供简单的数据计算
+  watch: {}, //监听vue实例上数据的变动
+  //定义及初始化数据
+  data () {
+    return {
+      msg: '欢迎来到菜鸟教程！'
+    }
+  }
+  methods: {}, //提供复杂的数据计算
+  mounted: {}, //html加载完成后执行
+}
+</script>
+<style>
+</style>
+27、vue父组件与子组件的调用
+##子组件
+<template>
+  <div class="train-city">
+    <h3>message:sendData</h3> 
+    <br/><button @click='select(`大连`)'>点击此处将‘大连’发射给父组件</button>
+  </div>
+</template>
+ 
+<script>
+export default {
+  //组件名字
+  name: "train-city",
+  //需要父组件传递的参数
+  props:{
+    sendData:{
+      Type:String,
+      default:""
+    }
+  },
+  //子组件自己的参数
+  data(){
+    return{
+        message: '父组件传给子组件的toCity'
+    }
+},
+methods:{
+    select(value){
+       //select事件触发后，自动触发showCityName事件，将子组件参数value传递给父组件
+       this.$emit('showCityName',value)
+    } 
+    },
+}
+</script>
+##父组件
+<template>
+    <div>
+        //将sendData传给子组件train-city
+        <train-city @showCityName="updateCity" :sendData="toCity"></train-city>
+    </div>
+<template>
+<script>
+import train-city from "./train-city";
+export default {
+  name: "parent-com",
+  components: { train-city },
+  methods:{
+      updateCity(value){
+         console.log(value)
+      } 
+      },
+}
+</script>
 ```
 ## 6、linux的一些命令
 ```
@@ -2242,3 +2319,80 @@ http 192.168.11.103:80：内网穿透地址：http 192.168.11.103:80
 访问https://4433-38-83-110-6.ngrok.io/python/createJira  映射到  http://192.168.11.103:10633/createJira
 3、[同时配置多端口-多隧道](https://blog.csdn.net/daqiang012/article/details/84982338)个数有限制
 ```
+## 31、网络相关
+```
+1、内网（局域网）与外网（广域网）之间的关系：
+内网A与内网B之间不可以访问
+
+外网A与外网B之间可以访问
+内网可以访问外网
+外网可以通过Ngrok访问内网
+```
+## 31、AI
+1、工具：
+numpy：处理矩阵数据
+```
+https://github.com/datawhalechina/powerful-numpy
+https://github.com/datawhalechina/machine-learning-toy-code/tree/main/ml-with-numpy
+// 创建和生成
+np.linspace(start, end, nums)
+rng.integers/uniform(low, high, size)
+rng.normal(loc, scale, size)
+// 统计和属性
+arr.shape
+arr.sum/max/min(axis, keepdims)
+np.average(arr, axis)
+// 形状和转换
+arr.reshpae/np.reshape
+np.expand_dims(arr, axis)
+np.squeeze(arr axis)
+np.transpose(arr, axis)
+arr.T
+// 分解和组合
+arr[start:stop:step, ...]
+np.concatenate((arr1, arr2), axis)
+np.stack((arr1, arr2), axis)
+np.repeat(arr, repeat_num, axis)
+np.split(arr, part_num, axis)
+// 筛选和过滤
+np.where(condition, arr, replaced_val)
+rng.choice(a, size, replace=False, p=probs_size_equals_a)
+rng.argmax/argmin/argsort(arr, axis)
+// 矩阵和计算
++-*/
+np.dot(a, b) == a.dot(b)
+np.matmul(a, b) == a @ b
+```
+sklearn：机器学习框架，不包含神经网络框架
+(1)linearRegression-线性回归：回归问题，利用一条线去拟合所有点
+    f(x)=wx+b
+    ![线性回归](pics/线性回归.png)
+   多项式回归：
+   ![多项式线性回归](pics/多项式线性回归.png)
+(2)logisticRegression-逻辑回归：二分类问题，线性问题
+    f(x)=sigmoid(wx+b)取值范围在0-1之间
+    ![逻辑回归](pics/逻辑回归.png)
+(3)decisionTree-决策树：二分类；信息熵：h(x)=-(p(x1)logp(x1)+p(x2)logp(x2+...))
+    ![信息熵](pics/信息熵.png)
+(4)multilayerPerceptron-MLP-多层感知机：二分类问题，前馈神经网络，最早的神经网络，加入了隐藏层。
+    感知机：f(x)=sign(wx+b)其中sign是个符号函数，若wx+b>=0取+1，若wx+b<0取-1，线性问题
+    ![MLP](pics/MLP.png)
+    激活函数：让线性方程实现非线性化，解决更多问题
+    ![激活函数](pics/激活函数.jpg)    
+(5)supportVectorMachine-svm-支持向量机-非线性问题
+    SVM的目标是希望找到一个超平面能把数据分开，以sign符号函数作为分类决策函数，通过最大化支持向量距离超平面这个最小距离来对参数进行优化。
+    ![SVM](pics/SVM.jpg)
+    感知器和SVM的对比：
+    它俩都是用于分类的模型，且都以sign符号函数作为分类决策函数。但是感知器只适用于线性可分的数据，而SVM可以通过核函数处理非线性可分的数据。拿感知器和线性可分支持向量机对比，他们的目标都是希望找到一个超平面能把数据分开，同时分类决策函数使用的都是sign符号函数，不同之处在于优化目标不同，感知机是通过最小化误分类点到超平面的距离来对参数进行优化，从而确定这个超平面，而SVM是通过最大化支持向量距离超平面这个最小距离来对参数进行优化。
+    Logistic和SVM的区别：
+    SVM分为线性可分支持向量机，线性支持向量机以及非线性可分支持向量机，它还适用于对非线性可分的数据进行分类。Logistic回归一般用于处理线性可分的数据。这里进行线性可分支持向量机和Logistic回归的对比，SVM的目标是希望找到一个超平面能把数据分开，以sign符号函数作为分类决策函数，通过最大化支持向量距离超平面这个最小距离来对参数进行优化。逻辑回归假设数据服从伯努利分布,以最大化条件概率为学习策略（优化目标），以对数似然函数为损失函数，运用梯度下降法来优化参数，以sigmoid函数作为分类决策函数。
+tensorflow：深度学习框架
+pytorch：深度学习框架
+keras：深度学习框架
+
+欠拟合与过拟合：
+![欠拟合过拟合](pics/欠拟合过拟合.png)
+解决过拟合问题的方法主要有两种：
+1.减少特征数量，通过人工或者算法选择哪些特征有用保留，哪些特征没用删除，但会丢失信息。
+2.正则化，保留特征，但减少特征对应参数的大小，让每个特征都对预测产生一点影响。
+![正则化过拟合](pics/正则化过拟合.png)
