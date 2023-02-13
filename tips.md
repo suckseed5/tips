@@ -2369,27 +2369,27 @@ np.matmul(a, b) == a @ b
 
     f(x)=wx+b
 
-    ![线性回归](pics/线性回归.png)
+    ![线性回归](pics/线性回归.PNG)
 
    多项式回归：
 
-   ![多项式线性回归](pics/多项式线性回归.png)
+   ![多项式线性回归](pics/多项式线性回归.PNG)
 
 (2)logisticRegression-逻辑回归：二分类问题，线性问题
 
     f(x)=sigmoid(wx+b)取值范围在0-1之间
 
-    ![逻辑回归](pics/逻辑回归.png)
+    ![逻辑回归](pics/逻辑回归.PNG)
 
 (3)decisionTree-决策树：二分类；信息熵：h(x)=-(p(x1)logp(x1)+p(x2)logp(x2+...))
 
-    ![信息熵](pics/信息熵.png)
+    ![信息熵](pics/信息熵.PNG)
 
 (4)multilayerPerceptron-MLP-多层感知机：二分类问题，前馈神经网络，最早的神经网络，加入了隐藏层。
 
     感知机：f(x)=sign(wx+b)其中sign是个符号函数，若wx+b>=0取+1，若wx+b<0取-1，线性问题
 
-    ![MLP](pics/MLP.png)
+    ![MLP](pics/MLP.PNG)
 
     激活函数：让线性方程实现非线性化，解决更多问题
 
@@ -2419,7 +2419,7 @@ np.matmul(a, b) == a @ b
 
 欠拟合与过拟合：
 
-![欠拟合过拟合](pics/欠拟合过拟合.png)
+![欠拟合过拟合](pics/欠拟合过拟合.PNG)
 
 解决过拟合问题的方法主要有两种：
 
@@ -2427,4 +2427,4 @@ np.matmul(a, b) == a @ b
 
 2.正则化，保留特征，但减少特征对应参数的大小，让每个特征都对预测产生一点影响。
 
-![正则化过拟合](pics/正则化过拟合.png)
+![正则化过拟合](pics/正则化过拟合.PNG)
