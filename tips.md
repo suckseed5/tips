@@ -2365,11 +2365,11 @@ np.matmul(a, b) == a @ b
 ```
 2、sklearn：机器学习框架，不包含神经网络框架
 
-2.1 linearRegression-线性回归：回归问题，利用一条线去拟合所有点
+2.1 linearRegression-线性回归：
 
     f(x)=wx+b
 
-    ![线性回归](pics/线性回归.PNG)
+   ![线性回归](pics/线性回归.PNG)
 
    多项式回归：
 
@@ -2379,27 +2379,27 @@ np.matmul(a, b) == a @ b
 
     f(x)=sigmoid(wx+b)取值范围在0-1之间
 
-    ![逻辑回归](pics/逻辑回归.PNG)
+   ![逻辑回归](pics/逻辑回归.PNG)
 
 2.3 decisionTree-决策树：二分类；信息熵：h(x)=-(p(x1)logp(x1)+p(x2)logp(x2+...))
 
-    ![信息熵](pics/信息熵.PNG)
+   ![信息熵](pics/信息熵.PNG)
 
 2.4 multilayerPerceptron-MLP-多层感知机：二分类问题，前馈神经网络，最早的神经网络，加入了隐藏层。
 
     感知机：f(x)=sign(wx+b)其中sign是个符号函数，若wx+b>=0取+1，若wx+b<0取-1，线性问题
 
-    ![MLP](pics/MLP.PNG)
+   ![MLP](pics/MLP.PNG)
 
     激活函数：让线性方程实现非线性化，解决更多问题
 
-    ![激活函数](pics/激活函数.jpg)  
+   ![激活函数](pics/激活函数.jpg)
 
 2.5 supportVectorMachine-svm-支持向量机-非线性问题
 
     SVM的目标是希望找到一个超平面能把数据分开，以sign符号函数作为分类决策函数，通过最大化支持向量距离超平面这个最小距离来对参数进行优化。
 
-    ![SVM](pics/SVM.jpg)
+   ![SVM](pics/SVM.jpg)
 
     感知器和SVM的对比：
 
