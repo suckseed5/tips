@@ -2365,7 +2365,7 @@ np.matmul(a, b) == a @ b
 ```
 2、sklearn：机器学习框架，不包含神经网络框架
 
-2.1 linearRegression-线性回归：
+2.1 linearRegression-线性回归：回归问题，利用一条线去拟合所有点
 
     f(x)=wx+b
 
