@@ -2470,6 +2470,20 @@ np.matmul(a, b) == a @ b
     选择一个样本的k个最相似（特征空间最邻近）的样本中的大多数属于哪个类别，该样本就属于这个样本
 
    ![KNN](pics/KNN.PNG)
+
+2.11 PCA/Principal component analysis/主成分析法-降维-非监督
+
+    降维：降维是通过减少数据中的指标（或变量）以化简数据的过程，用复杂的数理知识，得到几个“综合指标/主成分”来代表整个数据。
+
+    PCA：就是以“降维”为核心，把多指标的数据用少数几个综合指标（主成分）替代，还原数据最本质特征的数据处理方式。
+
+    ![PCA](pics/PCA.PNG)
+
+2.12 HMM/Hidden Markov Model/隐马尔可夫模型-中文分词、词性标注-有无监督
+
+    ![HMM-1](pics/HMM-1.PNG)
+    ![HMM-2](pics/HMM-2.PNG)
+    ![HMM-3](pics/HMM-3.PNG)
     
 3、tensorflow：深度学习框架
 
