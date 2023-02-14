@@ -2477,13 +2477,13 @@ np.matmul(a, b) == a @ b
 
     PCA：就是以“降维”为核心，把多指标的数据用少数几个综合指标（主成分）替代，还原数据最本质特征的数据处理方式。
 
-    ![PCA](pics/PCA.PNG)
+   ![PCA](pics/PCA.PNG)
 
 2.12 HMM/Hidden Markov Model/隐马尔可夫模型-中文分词、词性标注-有无监督
 
-    ![HMM-1](pics/HMM-1.PNG)
-    ![HMM-2](pics/HMM-2.PNG)
-    ![HMM-3](pics/HMM-3.PNG)
+   ![HMM-1](pics/HMM-1.PNG)
+   ![HMM-2](pics/HMM-2.PNG)
+   ![HMM-3](pics/HMM-3.PNG)
     
 3、tensorflow：深度学习框架
 
