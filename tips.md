@@ -2401,8 +2401,7 @@ X：(300,4),y：(300,)，其中300是样本数量，4是特征数量
     from sklearn.model_selection import train_test_split
     //n_samples样本数量，n_features特征数量，n_classes分类数，n_informative全部有效的特征，n_redundant冗余特征为0，n_clusters_per_class每一个类别聚为一个簇
     //X：(30,2),y：(30,)=array([0, 1..])
-    X, y = make_classification(n_samples=30, n_features=2, n_classes=2,n_informative=2, n_redundant=0,n_clusters_per_class=1) 
-    
+    X, y = make_classification(n_samples=30, n_features=2, n_classes=2,n_informative=2, n_redundant=0,n_clusters_per_class=1)     
 (5) iris_data_set = pd.read_csv('原始数据集/iris.csv')
     //x是4列特征
     x = iris_data_set.iloc[:, 0:4].values
@@ -2422,7 +2421,7 @@ X：(300,4),y：(300,)，其中300是样本数量，4是特征数量
 ```
 #### 数据集划分
 ```
-# 划分训练集和测试集
+划分训练集和测试集
 from sklearn.model_selection import train_test_split
 X_train, x_test, y_train, y_test = train_test_split(X,y,test_size = 0.4,random_state = 42)  
 ```
@@ -2470,8 +2469,8 @@ X_train, x_test, y_train, y_test = train_test_split(X,y,test_size = 0.4,random_s
 ```
 3、特征降维（降维是指在某些限定条件下，降低随机变量/特征个数，得到一组不相关主变量的过程）
 机变量/特征个数，得到一组不相关主变量的过程）
-3.1、特征选择:Filter（过滤式）/Embedded（嵌入式）
 ```
+3.1、特征选择:Filter（过滤式）/Embedded（嵌入式）
 3.1.1、过滤式
 （1）低方差特征过滤（删除所有低方差特征）
 from sklearn.feature_selection import VarianceThreshold
@@ -2486,8 +2485,8 @@ r = pearsonr(data["pe_ratio"], data["pb_ratio"])
 （2）正则化
 （3）深度学习
 ```
-3.2、主成分分析（PCA）
 ```
+3.2、主成分分析（PCA）
 定义：高维数据转化为低维数据的过程，在此过程中可能会舍弃原有数据、创造新的变量
 作用：是数据维数压缩，尽可能降低原数据的维数（复杂度），损失少量信息
 应用：回归分析或者聚类分析
@@ -2506,6 +2505,7 @@ data_new = transfer.fit_transform(data)
   model = DecisionTreeClassifier(max_depth =3, random_state = 42)
   model.fit(X_train, y_train) 
 ``` 
+
    ![信息熵](pics/信息熵.PNG)
 
 2、multilayerPerceptron-MLP-多层感知机：二分类问题，前馈神经网络，最早的神经网络，加入了隐藏层。
@@ -2514,6 +2514,7 @@ data_new = transfer.fit_transform(data)
   clf = MLPClassifier(alpha=1e-5,hidden_layer_sizes=(15,15), random_state=1)
   clf.fit(X_train, y_train)
 ```
+
     感知机：f(x)=sign(wx+b)其中sign是个符号函数，若wx+b>=0取+1，若wx+b<0取-1，线性问题
   
    ![MLP](pics/MLP.png)
@@ -2635,20 +2636,25 @@ data_new = transfer.fit_transform(data)
 
 ### 32.5、回归聚类算法
 1、线性回归-目标值连续型的数据
+
 1.1、linearRegression-线性回归：回归问题，利用一条线去拟合所有点
+
 线性-直线：
 ```
-    from sklearn.linear_model import LinearRegression
+  from sklearn.linear_model import LinearRegression
   model = LinearRegression() # 定义模型
   model.fit(X_train, y_train) # 训练模型
 ```
     f(x)=wx+b
   
    ![线性回归](pics/线性回归.PNG)
+
 非线性-曲线：
+
    多项式回归：
+
 ```
-    from sklearn.pipeline import Pipeline
+  from sklearn.pipeline import Pipeline
   from sklearn.preprocessing import PolynomialFeatures # 导入能够计算多项式特征的类
   from sklearn.linear_model import LinearRegression
   degrees = [1, 4, 15] # 多项式最高次
@@ -2661,7 +2667,9 @@ data_new = transfer.fit_transform(data)
       pipeline.fit(X, y)
 ```
    ![多项式线性回归](pics/多项式线性回归.PNG)
+
 2、分类：逻辑回归与二分类
+
 2.1、logisticRegression-逻辑回归：二分类问题，线性问题
 ```
   from sklearn.linear_model import LogisticRegression
@@ -2671,7 +2679,9 @@ data_new = transfer.fit_transform(data)
     f(x)=sigmoid(wx+b)取值范围在0-1之间
   
    ![逻辑回归](pics/逻辑回归.PNG)
+
 3、无监督学习：
+
 3.1、k-means聚类算法：无监督-不需要训练集-发现k个不同的簇
 ```
   from sklearn.cluster import KMeans
