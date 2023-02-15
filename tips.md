@@ -2328,8 +2328,13 @@ http 192.168.11.103:80：内网穿透地址：http 192.168.11.103:80
 内网可以访问外网
 外网可以通过Ngrok访问内网
 ```
-## 31、AI
-1、工具：
+## 32、Sklearn机器学习：机器学习框架，不包含神经网络框架
+
+   ![机器学习](pics/机器学习.PNG)
+
+   ![机器学习思维导图](pics/机器学习思维导图.PNG)
+
+### 32.1、工具
 numpy：处理矩阵数据
 ```
 https://github.com/datawhalechina/powerful-numpy
@@ -2363,40 +2368,178 @@ rng.argmax/argmin/argsort(arr, axis)
 np.dot(a, b) == a.dot(b)
 np.matmul(a, b) == a @ b
 ```
-2、sklearn：机器学习框架，不包含神经网络框架
-
-2.1 linearRegression-线性回归：回归问题，利用一条线去拟合所有点
-
-    f(x)=wx+b
-
-   ![线性回归](pics/线性回归.PNG)
-
-   多项式回归：
-
-   ![多项式线性回归](pics/多项式线性回归.PNG)
-
-2.2 logisticRegression-逻辑回归：二分类问题，线性问题
-
-    f(x)=sigmoid(wx+b)取值范围在0-1之间
-
-   ![逻辑回归](pics/逻辑回归.PNG)
-
-2.3 decisionTree-决策树：二分类；信息熵：h(x)=-(p(x1)logp(x1)+p(x2)logp(x2+...))
-
+### 32.2、数据集
+#### 可用数据集
+```
+1、**纯数字**
+X：(300,4),y：(300,)，其中300是样本数量，4是特征数量
+(1) X = np.sort(np.random.rand(n_samples)) 
+    y = p.cos(1.5 * np.pi * X) + np.random.randn(n_samples) * 0.1
+(2) from sklearn.datasets import load_iris,...
+    from sklearn.model_selection import train_test_split
+    data = load_iris() 
+    //转换成.DataFrame形式,可以用replace
+    df = pd.DataFrame(data.data, columns = data.feature_names)
+    df['Species'] = data.target
+    //用数值替代品种名作为标签
+    target = np.unique(data.target)
+    target_names = np.unique(data.target_names)
+    targets = dict(zip(target, target_names))
+    df['Species'] = df['Species'].replace(targets)
+    //提取数据和标签
+    X = df.drop(columns="Species")
+    y = df["Species"]
+    feature_names = X.columns
+    labels = y.unique()
+    //其中X,y是DataFrame格式,test_size样本占比，random_state随机种子确保执行42次获取的训练集测试集都相同
+(3) from sklearn.datasets import fetch_openml,...
+    from sklearn.model_selection import train_test_split
+    mnist = fetch_openml('mnist_784')
+    X, y = mnist['data'], mnist['target']
+    //其中X,y是array格式
+(4) from sklearn.datasets import make_classification
+    from sklearn.model_selection import train_test_split
+    //n_samples样本数量，n_features特征数量，n_classes分类数，n_informative全部有效的特征，n_redundant冗余特征为0，n_clusters_per_class每一个类别聚为一个簇
+    //X：(30,2),y：(30,)=array([0, 1..])
+    X, y = make_classification(n_samples=30, n_features=2, n_classes=2,n_informative=2, n_redundant=0,n_clusters_per_class=1) 
+    
+(5) iris_data_set = pd.read_csv('原始数据集/iris.csv')
+    //x是4列特征
+    x = iris_data_set.iloc[:, 0:4].values
+    //y是1列标签
+    y = iris_data_set.iloc[:, -1].values
+```
+```
+2、**不是数字**
+(1) # dataset目录包含”类别1，类别2，类别3...“多个目录，每个类别目录包含”1.txt,2.txt,3.txt“多条数据
+    data = datasets.load_files('dataset', shuffle=True)
+    x=data.data
+    y=data.target   
+(2) # 准备dataset.csv数据文件，文件内容包括X列data和y列class
+    data = pd.read_csv("dataset.csv",sep='\t')
+    x=data.iloc[:,0].values
+    y=data.iloc[:,1].values
+```
+#### 数据集划分
+```
+# 划分训练集和测试集
+from sklearn.model_selection import train_test_split
+X_train, x_test, y_train, y_test = train_test_split(X,y,test_size = 0.4,random_state = 42)  
+```
+### 32.3、特征工程
+1、特征提取
+```
+  //a.文本特征提取CountVectorizer：对文本数据进行特征值化(返回词频矩阵，统计每个样本特征值出现次数)
+  //加停用词
+  //vectorizer = CountVectorizer(stop_words=["is", "too"])
+  vectorizer = CountVectorizer()
+  X_train = vectorizer.fit_transform(data_new)
+  vectorizer = CountVectorizer()
+  x_test = vectorizer.fit_transform(x_test)    
+  //b.文本特征抽取TfidfVevtorizer：对文本数据进行特征值化,计算词的重要程度(返回权重矩阵)
+  //加停用词
+  //vectorizer = TfidfVectorizer(stop_words=["is", "too"])
+  vectorizer = TfidfVectorizer()
+  X_train = vectorizer.fit_transform(data_new)
+  vectorizer = TfidfVectorizer()
+  x_test = vectorizer.fit_transform(x_test)  
+  //c.字典特征提取：对字典数据进行特征值化
+  data = [{'city': '北京', 'temperature': 100}, {'city': '上海', 'temperature': 60}, {'city': '深圳', 'temperature': 30}]
+  //1.实例化一个转换器类
+  transfer = DictVectorizer()
+```
+2、特征预处理
+归一化、标准化（因为可能会出现一些数据过大一些数据过小）
+```
+归一化：通过对原始数据进行变换把数据映射到（默认为[0,1]）之间（只适用于传统精确小数据场景）
+    from sklearn.preprocessing import MinMaxScaler
+    //2.实例化一个转换器类
+    transfer = MinMaxScaler()
+    //也可以自己去设定归一化范围
+    //transfer = MinMaxScaler(feature_range=[2,3])
+    //3.调用fit_transform
+    data_new = transfer.fit_transform(data)
+标准化：通过对原始数据进行变换把数据变换到均值为0，标准差为1的范围内（适合现代嘈杂大数据场景）
+    from sklearn.preprocessing import StandardScaler
+    //2.实例化一个转换器类
+    transfer = StandardScaler()
+    //也可以自己去设定归一化范围
+    //transfer = MinMaxScaler(feature_range=[2,3])
+    //3.调用fit_transform
+    data_new = transfer.fit_transform(data)
+```
+3、特征降维（降维是指在某些限定条件下，降低随机变量/特征个数，得到一组不相关主变量的过程）
+机变量/特征个数，得到一组不相关主变量的过程）
+3.1、特征选择:Filter（过滤式）/Embedded（嵌入式）
+```
+3.1.1、过滤式
+（1）低方差特征过滤（删除所有低方差特征）
+from sklearn.feature_selection import VarianceThreshold
+transfer = VarianceThreshold(threshold=10)
+data_new = transfer.fit_transform(data)
+（2）相关系数（反映变量之间相关关系密切程度的统计指标）
+from scipy.stats import pearsonr
+计算某两个变量之间的相关系数
+r = pearsonr(data["pe_ratio"], data["pb_ratio"])
+3.1.2、Embedded（算法自动选择特征（特征与目标值之间的关联））
+（1）决策树
+（2）正则化
+（3）深度学习
+```
+3.2、主成分分析（PCA）
+```
+定义：高维数据转化为低维数据的过程，在此过程中可能会舍弃原有数据、创造新的变量
+作用：是数据维数压缩，尽可能降低原数据的维数（复杂度），损失少量信息
+应用：回归分析或者聚类分析
+from sklearn.decomposition import PCA
+data = [[2,0,3,9], [3,2,6,5], [7,5,1,8]]
+//1.实例化一个转换器类
+//意思是将4维降到2维
+transfer = PCA(n_components=2)
+//2.调用fit_transform
+data_new = transfer.fit_transform(data)
+```
+### 32.4、分类算法
+1、decisionTree-决策树：二分类；信息熵：h(x)=-(p(x1)logp(x1)+p(x2)logp(x2+...))
+```
+  from sklearn.tree import DecisionTreeClassifier
+  model = DecisionTreeClassifier(max_depth =3, random_state = 42)
+  model.fit(X_train, y_train) 
+``` 
    ![信息熵](pics/信息熵.PNG)
 
-2.4 multilayerPerceptron-MLP-多层感知机：二分类问题，前馈神经网络，最早的神经网络，加入了隐藏层。
-
+2、multilayerPerceptron-MLP-多层感知机：二分类问题，前馈神经网络，最早的神经网络，加入了隐藏层。
+```
+  from sklearn.neural_network import MLPClassifier
+  clf = MLPClassifier(alpha=1e-5,hidden_layer_sizes=(15,15), random_state=1)
+  clf.fit(X_train, y_train)
+```
     感知机：f(x)=sign(wx+b)其中sign是个符号函数，若wx+b>=0取+1，若wx+b<0取-1，线性问题
-
+  
    ![MLP](pics/MLP.png)
 
     激活函数：让线性方程实现非线性化，解决更多问题
 
    ![激活函数](pics/激活函数.jpg)
 
-2.5 supportVectorMachine-svm-支持向量机-非线性问题
-
+3、supportVectorMachine-svm-支持向量机-非线性问题
+```
+  from sklearn import svm
+  //线性svm
+  model_linear = svm.SVC(kernel='linear', C = 0.001)
+  model_linear.fit(data, label) # 训练
+  //多项式核
+  plt.figure(figsize=(16, 15))
+  for i, degree in enumerate([1, 3, 5, 7, 9, 12]):  # 多项式次数选择了1,3,5,7,9,12
+      //C: 惩罚系数，gamma: 高斯核的系数
+      model_poly = svm.SVC(C=0.0001, kernel='poly', degree=degree)  # 多项式核
+      model_poly.fit(data, label)  # 训练
+  //高斯核svm
+  for i, gamma in enumerate([1, 5, 15, 35, 45, 55]):
+      //C: 惩罚系数，gamma: 高斯核的系数
+      model_rbf = svm.SVC(kernel='rbf', gamma=gamma, C=0.0001)
+      model_rbf.fit(data, label)
+``` 
     SVM的目标是希望找到一个超平面能把数据分开，以sign符号函数作为分类决策函数，通过最大化支持向量距离超平面这个最小距离来对参数进行优化。
 
    ![SVM](pics/SVM.png)
@@ -2409,16 +2552,25 @@ np.matmul(a, b) == a @ b
 
     SVM分为线性可分支持向量机，线性支持向量机以及非线性可分支持向量机，它还适用于对非线性可分的数据进行分类。Logistic回归一般用于处理线性可分的数据。这里进行线性可分支持向量机和Logistic回归的对比，SVM的目标是希望找到一个超平面能把数据分开，以sign符号函数作为分类决策函数，通过最大化支持向量距离超平面这个最小距离来对参数进行优化。逻辑回归假设数据服从伯努利分布,以最大化条件概率为学习策略（优化目标），以对数似然函数为损失函数，运用梯度下降法来优化参数，以sigmoid函数作为分类决策函数。
 
-2.6 bayes-贝叶斯分类器：
-
+4、bayes-贝叶斯分类器：
+```
+  from sklearn.naive_bayes import GaussianNB
+  model = GaussianNB()#朴素贝叶斯
+  model.fit(X, y)# 训练模型
+``` 
    ![贝叶斯分类器](pics/贝叶斯分类器.PNG)
 
    nbayes-朴素贝叶斯分类器：
 
    ![朴素贝叶斯分类器](pics/朴素贝叶斯分类器.PNG)
 
-2.7 分类器组合方法：bagging-装袋算法/随机森林-集成学习
-
+5、分类器组合方法：bagging-装袋算法/随机森林-集成学习
+```
+  from sklearn.ensemble import BaggingClassifier
+  //建立AdaBoost分类器，每个基本分类模型为前面训练的决策树模型，最大的弱学习器的个数为50
+  model = BaggingClassifier(base_estimator=base_model,n_estimators=50,random_state=1)
+  model.fit(X_train, y_train)# 训练
+``` 
     bagging：各个弱学习器（决策树和神经网络）之间没有依赖关系，可以并行拟合，有放回随机采样，平权投票
 
     1.给定一个弱学习算法,和一个训练集;
@@ -2432,9 +2584,17 @@ np.matmul(a, b) == a @ b
    ![bagging](pics/bagging.PNG)
 
     随机森林:随机森林是普通决策树的集合，进化版的bagging，新增加了特征的随机选择
-
-2.8 分类器组合方法：boosting-提升方法/AdaBoost-集成学习
-
+```
+  from sklearn.ensemble import RandomForestClassifier
+  model = RandomForestClassifier(n_estimators=50,random_state=1)
+  model.fit(X_train, y_train)# 训练
+``` 
+6、分类器组合方法：boosting-提升方法/AdaBoost-集成学习
+```
+  from sklearn.ensemble import AdaBoostClassifier
+  Adbc = AdaBoostClassifier(n_estimators=50,learning_rate=1.5)
+  model = Adbc.fit(X_train, y_train)
+``` 
     boosting:各个弱学习器之间有依赖关系，无放回随机采样，加权投票
 
     1.先从初始训练集训练出一个基学习器
@@ -2449,8 +2609,76 @@ np.matmul(a, b) == a @ b
 
    ![boosting](pics/boosting.PNG)
 
-2.9 k-means聚类算法：无监督-不需要训练集-发现k个不同的簇
 
+7、KNN/k-nearest-neighbors近邻算法：监督学习
+```
+  from sklearn.neighbors import KNeighborsClassifier
+  //构造KNN分类器：采用默认参数
+  knn = KNeighborsClassifier() 
+  //拟合模型：
+  knn.fit(train_x, train_y) 
+``` 
+    选择一个样本的k个最相似（特征空间最邻近）的样本中的大多数属于哪个类别，该样本就属于这个样本
+
+   ![KNN](pics/KNN.PNG)
+
+
+
+8、HMM/Hidden Markov Model/隐马尔可夫模型-中文分词、词性标注-有无监督
+```
+  from hmmlearn import hmm
+  gen_model = hmm.GaussianHMM(n_components=4, covariance_type="full")
+``` 
+   ![HMM-1](pics/HMM-1.PNG)
+   ![HMM-2](pics/HMM-2.PNG)
+   ![HMM-3](pics/HMM-3.PNG)
+
+### 32.5、回归聚类算法
+1、线性回归-目标值连续型的数据
+1.1、linearRegression-线性回归：回归问题，利用一条线去拟合所有点
+线性-直线：
+```
+    from sklearn.linear_model import LinearRegression
+  model = LinearRegression() # 定义模型
+  model.fit(X_train, y_train) # 训练模型
+```
+    f(x)=wx+b
+  
+   ![线性回归](pics/线性回归.PNG)
+非线性-曲线：
+   多项式回归：
+```
+    from sklearn.pipeline import Pipeline
+  from sklearn.preprocessing import PolynomialFeatures # 导入能够计算多项式特征的类
+  from sklearn.linear_model import LinearRegression
+  degrees = [1, 4, 15] # 多项式最高次
+  for i in range(len(degrees)):
+      polynomial_features = PolynomialFeatures(degree=degrees[i],
+                                               include_bias=False)
+      linear_regression = LinearRegression()
+      pipeline = Pipeline([("polynomial_features", polynomial_features),
+                           ("linear_regression", linear_regression)]) # 使用pipline串联模型
+      pipeline.fit(X, y)
+```
+   ![多项式线性回归](pics/多项式线性回归.PNG)
+2、分类：逻辑回归与二分类
+2.1、logisticRegression-逻辑回归：二分类问题，线性问题
+```
+  from sklearn.linear_model import LogisticRegression
+  clf = LogisticRegression(penalty="l1", solver="saga", tol=0.1)
+  clf.fit(X_train, y_train)
+```
+    f(x)=sigmoid(wx+b)取值范围在0-1之间
+  
+   ![逻辑回归](pics/逻辑回归.PNG)
+3、无监督学习：
+3.1、k-means聚类算法：无监督-不需要训练集-发现k个不同的簇
+```
+  from sklearn.cluster import KMeans
+  //聚类后,假设k=2
+  kmeans = KMeans(n_clusters=2)
+  model = kmeans.fit(X)
+``` 
     1.随机选取K个对象作为初始的聚类中心
 
     2.计算每个对象与各个种子聚类中心之间的距离，把每个对象分配给距离它最近的聚类中心
@@ -2464,43 +2692,40 @@ np.matmul(a, b) == a @ b
     2)没有（或最小数目）聚类中心再发生变化。
 
     3)误差平方和局部最小。
-
-2.10 KNN/k-nearest-neighbors近邻算法：监督学习
-
-    选择一个样本的k个最相似（特征空间最邻近）的样本中的大多数属于哪个类别，该样本就属于这个样本
-
-   ![KNN](pics/KNN.PNG)
-
-2.11 PCA/Principal component analysis/主成分析法-降维-非监督
-
+3.2、PCA/Principal component analysis/主成分析法-降维-非监督
+```
+  from sklearn.decomposition import PCA
+  pca = PCA(n_components=3)
+  pca.fit(X)
+``` 
     降维：降维是通过减少数据中的指标（或变量）以化简数据的过程，用复杂的数理知识，得到几个“综合指标/主成分”来代表整个数据。
 
     PCA：就是以“降维”为核心，把多指标的数据用少数几个综合指标（主成分）替代，还原数据最本质特征的数据处理方式。
 
    ![PCA](pics/PCA.PNG)
 
-2.12 HMM/Hidden Markov Model/隐马尔可夫模型-中文分词、词性标注-有无监督
-
-   ![HMM-1](pics/HMM-1.PNG)
-   ![HMM-2](pics/HMM-2.PNG)
-   ![HMM-3](pics/HMM-3.PNG)
-    
-3、tensorflow：深度学习框架
-
-4、pytorch：深度学习框架
-
-5、keras：深度学习框架
-
-6、注意：
-
-欠拟合与过拟合：
+### 32.6、其他
+1、欠拟合与过拟合：
 
 ![欠拟合过拟合](pics/欠拟合过拟合.PNG)
 
 解决过拟合问题的方法主要有两种：
 
-1.减少特征数量，通过人工或者算法选择哪些特征有用保留，哪些特征没用删除，但会丢失信息。
+(1).减少特征数量，通过人工或者算法选择哪些特征有用保留，哪些特征没用删除，但会丢失信息。
 
-2.正则化，保留特征，但减少特征对应参数的大小，让每个特征都对预测产生一点影响。
+(2).正则化，保留特征，但减少特征对应参数的大小，让每个特征都对预测产生一点影响。
 
 ![正则化过拟合](pics/过拟合正则化.PNG)
+
+2、模型评估、保存、加载
+```
+  //比对真实值和预测值
+  y_predict= model.predict(x_test)
+  //计算准确率
+  accuracy = model.score(x_test,y_text)
+  //保存
+  from sklearn.externals import joblib
+  joblib.dump(rf,'test.pkl')
+  //加载
+  joblib.load("test.pkl")
+```
