@@ -58,3 +58,7 @@
 29、[Nginx配置](https://github.com/suckseed5/tips/blob/main/tips.md#29Nginx配置)
 
 30、[Ngrok配置](https://github.com/suckseed5/tips/blob/main/tips.md#30Ngrok配置)
+
+31、[网络相关](https://github.com/suckseed5/tips/blob/main/tips.md#31网络相关)
+
+32、[klearn机器学习](https://github.com/suckseed5/tips/blob/main/tips.md#32klearn机器学习：机器学习框架，不包含神经网络框架)
