@@ -2585,7 +2585,7 @@ data_new = transfer.fit_transform(data)
 5、分类器组合方法：bagging-装袋算法/随机森林-集成学习
 ```
   from sklearn.ensemble import BaggingClassifier
-  //建立AdaBoost分类器，每个基本分类模型为前面训练的决策树模型，最大的弱学习器的个数为50
+  //建立Bagging分类器，每个基本分类模型为前面训练的决策树模型，最大的弱学习器的个数为50
   model = BaggingClassifier(base_estimator=base_model,n_estimators=50,random_state=1)
   model.fit(X_train, y_train)# 训练
 ``` 
