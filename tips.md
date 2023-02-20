@@ -1872,7 +1872,8 @@ https://blog.csdn.net/m0_49303104/article/details/122660782
         b、创建teams项目：yo teams，在.env文件中填写a中ID、PASSWORD，进行开发
         Teams[开发人员门户](https://dev.teams.microsoft.com/home)类似于UI化的env，与b中的.env一致
         c、[发布应用](https://admin.teams.microsoft.com/policies/manage-apps),上传应用即上传b项目中的zip文件，其中是应用的一些参数，不包含代码
-        d、每次修改项目文件后，需要更新Bot Framework中的Messaging endpoint,重新发布应用时修改mainifest中的version
+        d、每次修改项目文件后，若重新更新了ngrok地址，需要修改manifest.json中的version，再更新Bot Framework中的Messaging endpoint,最后重新发布应用
+        mainfest.json中的validDomains需要与本地的ngrok一致，否则打不开task module
 ```
 ## 29、Nginx配置
 ### 29.1、Nginx配置https证书
@@ -2428,13 +2429,26 @@ X_train, x_test, y_train, y_test = train_test_split(X,y,test_size = 0.4,random_s
 ### 32.3、特征工程
 1、特征提取
 ```
-  //a.文本特征提取CountVectorizer：对文本数据进行特征值化(返回词频矩阵，统计每个样本特征值出现次数)
+  //a.文本特征提取CountVectorizer：对文本数据进行特征值化(返回词频矩阵，统计每个样本特征值出现次数)，通常与TF-IDF模型配合使用
+  word_data = ['hello yes one',
+         'hi ok yes',
+         'one yes']
+  //实例化一个转换器类
   //加停用词
-  //vectorizer = CountVectorizer(stop_words=["is", "too"])
-  vectorizer = CountVectorizer()
-  X_train = vectorizer.fit_transform(data_new)
-  vectorizer = CountVectorizer()
-  x_test = vectorizer.fit_transform(x_test)    
+  transfer = CountVectorizer(stop_words=["is", "too"]) # 词袋模型
+  //调用fit_transform对原始数据进行学习
+  data = transfer.fit_transform(word_data) # 学习词汇表字典并返回文档术语矩阵
+  //查看结果
+  print(data.toarray()) # 输出转换后的特征向量
+  """
+  [[1 0 0 1 1]
+   [0 1 1 0 1]
+   [0 0 0 1 1]]
+  """
+  print(transfer.get_feature_names()) # 从特征整数索引到特征名称的数组映射
+  """
+  ['hello', 'hi', 'ok', 'one', 'yes']
+  """  
   //b.文本特征抽取TfidfVevtorizer：对文本数据进行特征值化,计算词的重要程度(返回权重矩阵)
   //加停用词
   //vectorizer = TfidfVectorizer(stop_words=["is", "too"])
@@ -2446,7 +2460,10 @@ X_train, x_test, y_train, y_test = train_test_split(X,y,test_size = 0.4,random_s
   data = [{'city': '北京', 'temperature': 100}, {'city': '上海', 'temperature': 60}, {'city': '深圳', 'temperature': 30}]
   //1.实例化一个转换器类
   transfer = DictVectorizer()
+  //d.词汇表模型
 ```
+   ![词汇表模型](pics/词汇表模型.PNG)
+
 2、特征预处理
 归一化、标准化（因为可能会出现一些数据过大一些数据过小）
 ```
@@ -2739,3 +2756,14 @@ data_new = transfer.fit_transform(data)
   //加载
   joblib.load("test.pkl")
 ```
+
+## 32、深度学习
+### 数据预处理
+分词-->构建词表（将每个词映射到唯一整数，需考虑词频、停用词）-->数字化（将分词后的文本转化为整数序列（每个整数对应词表中的一个词））-->数据预处理（填充、截断、归一化）
+from keras_preprocessing import sequence
+import keras as kr
+# 使用keras提供的pad_sequences来将文本pad为固定长度,即所有的测试数据每个字的标签长度都固定为600,例：array([[0,3,2,3],[0,4,23,4]],dtype=int32)
+x_pad = sequence.pad_sequences(data_id, max_length)
+# 将标签转换为one-hot表示,例：array([[1., 0., 0., 0.],[0., 1., 0., 0.],[0., 0., 1., 0.]], dtype=float32)
+# y_pad = sequence.pad_sequences(label_id, len(cat_to_id)) 
+y_pad = kr.utils.to_categorical(label_id, num_classes=len(cat_to_id)) 
