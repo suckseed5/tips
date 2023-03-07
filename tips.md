@@ -2427,86 +2427,289 @@ from sklearn.model_selection import train_test_split
 X_train, x_test, y_train, y_test = train_test_split(X,y,test_size = 0.4,random_state = 42)  
 ```
 ### 32.3、特征工程
+
 1、特征提取
+
+1.1、One-hot编码
+
+含义：将每个特征表示为一个高维稀疏向量，其中只有一个维度的值为1，其余维度的值为0。这种方法常用于文本分类、命名实体识别等任务。---每个字都是独热编码(len(texts),max(texts[i]),chinese_charset_size)
+
+缺点：大量数据，出现维度灾难，数据稀疏（0特别多，1特别少），存储开销大
 ```
-  //a.文本特征提取CountVectorizer：对文本数据进行特征值化(返回词频矩阵，统计每个样本特征值出现次数)，通常与TF-IDF模型配合使用
-  word_data = ['hello yes one',
-         'hi ok yes',
-         'one yes']
-  //实例化一个转换器类
-  //加停用词
-  transfer = CountVectorizer(stop_words=["is", "too"]) # 词袋模型
-  //调用fit_transform对原始数据进行学习
-  data = transfer.fit_transform(word_data) # 学习词汇表字典并返回文档术语矩阵
-  //查看结果
-  print(data.toarray()) # 输出转换后的特征向量
-  """
-  [[1 0 0 1 1]
-   [0 1 1 0 1]
-   [0 0 0 1 1]]
-  """
-  print(transfer.get_feature_names()) # 从特征整数索引到特征名称的数组映射
-  """
-  ['hello', 'hi', 'ok', 'one', 'yes']
-  """  
-  //b.文本特征抽取TfidfVevtorizer：对文本数据进行特征值化,计算词的重要程度(返回权重矩阵)
-  //加停用词
-  //vectorizer = TfidfVectorizer(stop_words=["is", "too"])
-  vectorizer = TfidfVectorizer()
-  X_train = vectorizer.fit_transform(data_new)
-  vectorizer = TfidfVectorizer()
-  x_test = vectorizer.fit_transform(x_test)  
-  //c.字典特征提取：对字典数据进行特征值化
-  data = [{'city': '北京', 'temperature': 100}, {'city': '上海', 'temperature': 60}, {'city': '深圳', 'temperature': 30}]
-  //1.实例化一个转换器类
-  transfer = DictVectorizer()
-  //d.词汇表模型
+import numpy as np
+import pdb
+#中文字符集大小
+chinese_charset_size = 20902
+#要编码的文本列表
+texts = ["我爱中国", "中国地理位置"]
+#将文本转换为数字序列，并将所有序列的长度设置为最长序列的长度
+num_sequences = []
+max_length = 0
+for text in texts:
+    num_sequence = [ord(c) - 19968 for c in text]
+    num_sequences.append(num_sequence)
+    max_length = max(max_length, len(num_sequence))
+#创建长度为中文字符集大小的全零矩阵
+one_hot_matrix = np.zeros((len(texts), max_length, chinese_charset_size))
+#将对应位置设置为1
+for i, num_sequence in enumerate(num_sequences):
+    for j, num in enumerate(num_sequence):
+        one_hot_matrix[i, j, num] = 1
+print(one_hot_matrix)
+#one_hot_matrix:(2, 6, 20902)
 ```
+1.2、bag-of-words（BoW）
+
+含义：将文本看作是一个袋子，将文本中的单词提取出来，忽略它们在文本中的顺序，然后统计每个单词在文本中出现的次数。这种方法可以用于文本分类、情感分析等任务。---CountVectorizer(len(texts),词汇表长度)
+```
+import numpy as np
+from sklearn.feature_extraction.text import CountVectorizer
+word_data = ['hello yes one',
+     'hi ok yes',
+     'one yes no bye']
+#实例化一个转换器类
+#加停用词
+transfer = CountVectorizer(stop_words=["is", "too"]) # 词袋模型
+#调用fit_transform对原始数据进行学习
+data = transfer.fit_transform(word_data) # 学习词汇表字典并返回文档术语矩阵
+#查看结果
+print(data.toarray()) # 输出转换后的特征向量
+```
+1.3、TF-IDF
+
+含义：在BoW的基础上，对于每个单词，计算其在所有文本中出现的文档频率（DF），并将其与每个文档中出现的频率（TF）相乘，得到TF-IDF值。TF-IDF可以用于文本分类、信息检索等任务。---TfidfVectorizer(len(texts),词汇表长度)
+
+例：库中10000条训练数据，8000条提到“母牛”，比如一条数据关于“母牛的产奶量”的文字，这条数据有100个词，“母牛”出现5次。tf = 5/100;idf = log(10000/8000);tfidf = tf * idf
+```
+import numpy as np
+from sklearn.feature_extraction.text import CountVectorizer,TfidfVectorizer
+corpus = ['hello yes one',
+     'hi ok yes',
+     'one yes no bye']
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(corpus)
+print(X.toarray())
+print(vectorizer.get_feature_names())
+```
+1.4、词嵌入
+
+含义：将每个单词表示为一个低维稠密向量，其中每个维度的值表示单词的某个语义特征。词嵌入可以通过训练神经网络来得到，例如使用Word2Vec、GloVe等算法。词嵌入可以用于文本分类、命名实体识别、机器翻译等任务。---不再是0和1，而是浮点数
+
+缺点：适用于大规模的文本分类任务，需要训练；或者直接使用预训练的词向量模型
+
+1.4.1、Word2Vec
+
+含义：由Google团队开发，基于神经网络模型
+```
+#gensim是一个用于处理文本数据的开源库，它提供了许多常用的自然语言处理算法，包括word2vec    
+from gensim.models import Word2Vec
+#将文本转换成单词序列
+texts = [["i", "love", "china"], ["china", "is", "my", "country"]]
+#训练模型,sg=1是skip-gram; otherwise CBOW
+model = Word2Vec(texts, size=100, window=5, min_count=1, workers=4, sg=1)
+#获取单词的特征向量
+word_vectors = model.wv
+for word in word_vectors.vocab:
+    print(word, word_vectors[word])
+```
+（1）CBOW是根据上下文单词预测当前单词
+```
+import numpy as np
+from keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from keras.layers import Input, Dense, Embedding, Lambda
+from keras.models import Model
+import keras.backend as K
+#输入数据
+texts = ["i love china", "china is my country"]
+#将文本分词，生成词典
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts(texts)
+word_index = tokenizer.word_index
+#==>{'china': 1, 'i': 2, 'love': 3, 'is': 4, 'my': 5, 'country': 6}
+#将文本转换成序列，作为模型输入
+sequences = tokenizer.texts_to_sequences(texts)
+#==>[[2, 3, 1], [1, 4, 5, 6]]
+sequences = pad_sequences(sequences, maxlen=5, padding='post', truncating='post')
+#==>array([[2, 3, 1, 0, 0],[1, 4, 5, 6, 0]])
+#定义CBOW模型
+input_layer = Input(shape=(5,))
+embedding_layer = Embedding(input_dim=len(word_index)+1, output_dim=10, input_length=5)(input_layer)
+average_layer = Lambda(lambda x: K.mean(x, axis=1))(embedding_layer)
+output_layer = Dense(len(word_index), activation='softmax')(average_layer)
+model = Model(inputs=input_layer, outputs=output_layer)
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+#训练CBOW模型
+model.fit(sequences, np.eye(len(word_index))[sequences[:,2]], epochs=100, verbose=0)
+#提取特征向量
+embedding_weights = model.get_weights()[0]
+for word, i in tokenizer.word_index.items():
+    print(word, embedding_weights[i])
+    #==> [-0.13362734  0.0866321   0.12426686 -0.08136223  0.1201726  -0.06153931 -0.06795458  0.15597151 -0.07688108  0.07355068]
+```
+（2）Skip-gram是根据当前单词预测上下文单词
+```
+import numpy as np
+from keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences,skipgrams
+from keras.layers import Input, Dense, Embedding, Reshape, Dot
+from keras.models import Model
+import keras.backend as K
+from keras.models import Sequential
+import pdb
+#输入数据
+texts = ["i love china", "china is my country"]
+#将文本分词，生成词典
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts(texts)
+word_index = tokenizer.word_index
+#==>{'china': 1, 'i': 2, 'love': 3, 'is': 4, 'my': 5, 'country': 6}
+#将文本转换成序列，作为模型输入
+sequences = tokenizer.texts_to_sequences(texts)
+#==>[[2, 3, 1], [1, 4, 5, 6]]
+#生成skip-grams样本
+X = np.array([i for i in range(len(word_index)+1)])
+Y = np.zeros((len(word_index)+1, len(word_index)+1))
+for sequence in sequences:
+    for i in range(len(sequence)):
+        for j in range(max(i-2,0),min(i+3,len(sequence))):
+            if i != j:
+                Y[sequence[i], sequence[j]] = 1
+#定义skip-gram模型
+model = Sequential()
+model.add(Embedding(input_dim=len(tokenizer.word_index)+1, output_dim=100, input_length=1))
+model.add(Reshape((100,)))
+model.add(Dense(units=len(tokenizer.word_index)+1, activation='softmax'))
+model.compile(loss='categorical_crossentropy', optimizer='adam')
+#训练skip-gram模型
+model.fit(X,Y, epochs=100, verbose=0)
+#提取特征向量
+embedding_weights = model.get_weights()[0]
+for word, i in tokenizer.word_index.items():
+    print(word, embedding_weights[i])
+    #==> [..,..,..]100
+```
+1.4.2、GloVe
+
+含义：由斯坦福大学开发，基于全局词频和共现矩阵，将每个单词表示为两个向量之和，一个表示单词的全局权重，一个表示单词与上下文单词的关系。
+
+1.4.3、fastText
+
+含义：由Facebook团队开发，基于Word2Vec，同时考虑单词内部的字符信息，使得单词的向量可以更好地捕捉其形态学信息。
+
+1.4.4、ELMo
+
+含义：由AllenNLP团队开发，基于双向LSTM模型，将每个单词表示为一个多层次的向量，可以表达不同上下文环境下的语义信息。
+
+1.4.5、BERT
+
+含义：由Google团队开发，基于Transformer模型，通过预训练任务和微调任务，学习到一个上下文相关的词嵌入，可以应用于多种自然语言处理任务。
+
+1.5、图像特征提取
+
+含义：将图像转换为特征向量，例如使用SIFT、HOG、CNN等算法。图像特征提取可以用于图像分类、目标检测等任务。
+
+1.6、声音特征提取
+
+含义：将声音信号转换为特征向量，例如使用MFCC、Spectrogram等算法。声音特征提取可以用于语音识别、说话人识别等任务。
+
+注：机器学习的一般特征提取方法
+
+a.文本特征提取CountVectorizer：对文本数据进行特征值化(返回词频矩阵，统计每个样本特征值出现次数)，通常与TF-IDF模型配合使用--同Bow编码
+```
+word_data = ['hello yes one',
+        'hi ok yes',
+        'one yes']
+#实例化一个转换器类
+#加停用词
+transfer = CountVectorizer(stop_words=["is", "too"]) # 词袋模型
+#调用fit_transform对原始数据进行学习
+data = transfer.fit_transform(word_data) # 学习词汇表字典并返回文档术语矩阵
+#查看结果
+print(data.toarray()) # 输出转换后的特征向量
+"""
+[[1 0 0 1 1]
+  [0 1 1 0 1]
+  [0 0 0 1 1]]
+"""
+print(transfer.get_feature_names()) # 从特征整数索引到特征名称的数组映射
+"""
+['hello', 'hi', 'ok', 'one', 'yes']
+"""  
+```
+b.文本特征抽取TfidfVevtorizer：对文本数据进行特征值化,计算词的重要程度(返回权重矩阵)--同TF-IDF编码
+```
+#加停用词
+#vectorizer = TfidfVectorizer(stop_words=["is", "too"])
+vectorizer = TfidfVectorizer()
+X_train = vectorizer.fit_transform(data_new)
+vectorizer = TfidfVectorizer()
+x_test = vectorizer.fit_transform(x_test)  
+```
+c.字典特征提取：对字典数据进行特征值化
+```
+data = [{'city': '北京', 'temperature': 100}, {'city': '上海', 'temperature': 60}, {'city': '深圳', 'temperature': 30}]
+#1.实例化一个转换器类
+transfer = DictVectorizer()
+```
+d.词汇表模型
    ![词汇表模型](pics/词汇表模型.PNG)
 
 2、特征预处理
-归一化、标准化（因为可能会出现一些数据过大一些数据过小）
+
+含义：归一化、标准化（因为可能会出现一些数据过大一些数据过小）
 ```
-归一化：通过对原始数据进行变换把数据映射到（默认为[0,1]）之间（只适用于传统精确小数据场景）
+#归一化：通过对原始数据进行变换把数据映射到（默认为[0,1]）之间（只适用于传统精确小数据场景）
     from sklearn.preprocessing import MinMaxScaler
-    //2.实例化一个转换器类
+    #2.实例化一个转换器类
     transfer = MinMaxScaler()
-    //也可以自己去设定归一化范围
-    //transfer = MinMaxScaler(feature_range=[2,3])
-    //3.调用fit_transform
+    #也可以自己去设定归一化范围
+    #transfer = MinMaxScaler(feature_range=[2,3])
+    #3.调用fit_transform
     data_new = transfer.fit_transform(data)
-标准化：通过对原始数据进行变换把数据变换到均值为0，标准差为1的范围内（适合现代嘈杂大数据场景）
+#标准化：通过对原始数据进行变换把数据变换到均值为0，标准差为1的范围内（适合现代嘈杂大数据场景）
     from sklearn.preprocessing import StandardScaler
-    //2.实例化一个转换器类
+    #2.实例化一个转换器类
     transfer = StandardScaler()
-    //也可以自己去设定归一化范围
-    //transfer = MinMaxScaler(feature_range=[2,3])
-    //3.调用fit_transform
+    #也可以自己去设定归一化范围
+    #transfer = MinMaxScaler(feature_range=[2,3])
+    #3.调用fit_transform
     data_new = transfer.fit_transform(data)
 ```
 3、特征降维（降维是指在某些限定条件下，降低随机变量/特征个数，得到一组不相关主变量的过程）
-机变量/特征个数，得到一组不相关主变量的过程）
-```
+
 3.1、特征选择:Filter（过滤式）/Embedded（嵌入式）
+
 3.1.1、过滤式
+
 （1）低方差特征过滤（删除所有低方差特征）
+```
 from sklearn.feature_selection import VarianceThreshold
 transfer = VarianceThreshold(threshold=10)
 data_new = transfer.fit_transform(data)
+```
 （2）相关系数（反映变量之间相关关系密切程度的统计指标）
+```
 from scipy.stats import pearsonr
-计算某两个变量之间的相关系数
+#计算某两个变量之间的相关系数
 r = pearsonr(data["pe_ratio"], data["pb_ratio"])
+```
 3.1.2、Embedded（算法自动选择特征（特征与目标值之间的关联））
+
 （1）决策树
+
 （2）正则化
+
 （3）深度学习
-```
-```
+
 3.2、主成分分析（PCA）
+
 定义：高维数据转化为低维数据的过程，在此过程中可能会舍弃原有数据、创造新的变量
+
 作用：是数据维数压缩，尽可能降低原数据的维数（复杂度），损失少量信息
+
 应用：回归分析或者聚类分析
+```
 from sklearn.decomposition import PCA
 data = [[2,0,3,9], [3,2,6,5], [7,5,1,8]]
 //1.实例化一个转换器类
@@ -2758,8 +2961,9 @@ data_new = transfer.fit_transform(data)
 ```
 
 ## 32、深度学习
-### 数据预处理
-分词-->构建词表（将每个词映射到唯一整数，需考虑词频、停用词）-->数字化（将分词后的文本转化为整数序列（每个整数对应词表中的一个词））-->数据预处理（填充、截断、归一化）
+### 32.1、数据预处理
+含义：分词-->构建词表（将每个词映射到唯一整数，需考虑词频、停用词）-->数字化（将分词后的文本转化为整数序列（每个整数对应词表中的一个词））-->数据预处理（填充、截断、归一化）
+```
 from keras_preprocessing import sequence
 import keras as kr
 # 使用keras提供的pad_sequences来将文本pad为固定长度,即所有的测试数据每个字的标签长度都固定为600,例：array([[0,3,2,3],[0,4,23,4]],dtype=int32)
@@ -2767,3 +2971,14 @@ x_pad = sequence.pad_sequences(data_id, max_length)
 # 将标签转换为one-hot表示,例：array([[1., 0., 0., 0.],[0., 1., 0., 0.],[0., 0., 1., 0.]], dtype=float32)
 # y_pad = sequence.pad_sequences(label_id, len(cat_to_id)) 
 y_pad = kr.utils.to_categorical(label_id, num_classes=len(cat_to_id)) 
+```
+## 33、GIMP修图
+1、获取图片轮廓：颜色-->去色;滤镜-->边缘检测-->边缘
+2、抠图：选择-->按颜色-->选择需要扣除颜色的区域;图层-->颜色到透明（color要修改"当前和旧的"的颜色）
+3、ps动图添加文字：https://blog.csdn.net/xiaoyuting_/article/details/99892233
+
+## 34、最新技术调研
+1、跨模态行人重识别：在可见光模式和红外模式下，分别采集到的是 RGB 图像和红外图像，这是属于两种不同模态的数据。尝试在两种模态下的图像库中检索匹配属于同一个体图像的问题。
+2、VR模拟月球状态
+3、将手语翻译成文本，应用于残疾人直播
+4、通过手势控制智能音箱
